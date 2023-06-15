@@ -1,0 +1,17 @@
+job = job
+executable = run.sh
+universe = vanilla
+
+environment = "id=$(Process)"
++JobFlavour = "tomorrow"
+
+
+log = job_R1_$(Process).log
+output = job_R1_$(Process).out
+error = job_R1_$(Process).err
+
+request_cpus = 4
+request_disk = 1000MB
+request_memory = 2000MB
+
+queue 48

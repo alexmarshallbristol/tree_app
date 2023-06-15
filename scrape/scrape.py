@@ -6,7 +6,9 @@ import geopy.distance
 import pandas as pd
 import time
 
-def get_attributes(url, verbose = False):
+verbose = True
+
+def get_attributes(url, tree_id, verbose = False):
 
     response = requests.get(url)
 
@@ -25,45 +27,66 @@ def get_attributes(url, verbose = False):
 
             dictionary = json.loads(x)
 
+            dictionary["TNSI"] = "False"
+            if "Trees of National Special Interest (TNSI)" in x:
+                dictionary["TNSI"] = "True"
+            dictionary["heritageTree"] = "False"
+            if "Heritage Tree" in x:
+                dictionary["heritageTree"] = "True"
+            dictionary["TotY"] = "False"
+            if "Tree of the Year – Shortlisted" in x:
+                dictionary["TotY"] = "Shortlisted"
+            if "Tree of the Year – Winner" in x:
+                dictionary["TotY"] = "Winner"
+            dictionary["championTree"] = "False"
+            if "Champion Tree" in x:
+                dictionary["championTree"] = "True"
+
             if verbose:
                 for key in dictionary:
                     print(key,':    ', dictionary[key],'\n')
             
-            # attributes_to_keep = ["gridReference", "latitude", "longitude", "species_name", "measuredGirth", "localName", "veteranStatus", "publicAccessibilityStatus"]
-            attributes_to_keep = ["latitude", "longitude", "species_name"]
+            attributes_to_keep = ["latitude", "longitude", "species_name", 
+                                    "localName", "veteranStatus", "publicAccessibilityStatus",
+                                    "TNSI", "heritageTree", "TotY", "championTree"]
 
             attributes = {}
             for attribute in attributes_to_keep:
                 attributes[attribute] = dictionary[attribute]
 
             # attributes['url'] = url
+            attributes['url'] = tree_id
 
             return attributes
 
-# my_location = (51.4613663, -2.5538767) # lat, long
+
 start_time = time.time()
 N_samples = 245000
 print("Scraping...")
 for tree_id in range(1, N_samples):
     try:
-        attributes = get_attributes(f"https://ati.woodlandtrust.org.uk/tree-search/tree?treeid={tree_id}#/")
-        print('\n')
-        # print(tree_id, attributes["species_name"], attributes["longitude"], attributes["latitude"], f'distance from Bristol: {geopy.distance.geodesic(my_location, (attributes["latitude"],attributes["longitude"])).km:.2f} km')
-        for attribute in attributes:
-            print(attribute,':  ',attributes[attribute])
+        attributes = get_attributes(f"https://ati.woodlandtrust.org.uk/tree-search/tree?treeid={tree_id}#/", tree_id)
+        if verbose:
+            print('\n')
+            for attribute in attributes:
+                print(attribute,':  ',attributes[attribute])
         try:
             df_i = pd.DataFrame(attributes, index=[tree_id])
             df = pd.concat([df, df_i])
         except:
             df = pd.DataFrame(attributes, index=[tree_id])
     except: 
+        if verbose:
+            print(f"Broken {tree_id}")
         pass
-        # print(f"Broken {tree_id}")
 
-    if tree_id % 10 == 0 and tree_id > 0:
+    if tree_id % 25 == 0 and tree_id > 0:
         current_time = time.time()
         elapsed_time = current_time-start_time
-        print(f"{tree_id}, {df.shape}, elapsed_time: {elapsed_time}, time per sample: {elapsed_time/tree_id}, expected time remaining: {(N_samples-tree_id)*(elapsed_time/tree_id)}")
+        try:
+            print(f"{tree_id}, {df.shape}, elapsed_time: {elapsed_time}, time per sample: {elapsed_time/tree_id}, expected time remaining: {(N_samples-tree_id)*(elapsed_time/tree_id)}")
+        except:
+            pass
 
 print(df)
 
