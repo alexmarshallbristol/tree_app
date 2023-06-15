@@ -1,12 +1,29 @@
+print("script")
 import requests
 from bs4 import BeautifulSoup
 import re 
 import json
-import geopy.distance
 import pandas as pd
 import time
+import argparse
+import shutil
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-p', type=int, default=0)
+parser.add_argument('-n', type=int, default=1)
+# parser.add_argument('-b', action='store_true')
+args = parser.parse_args()
+# print('job id:', args.p, 'batch?:', args.b, 'n_jobs?:', args.n)
+# batch = args.b
+batch = True
+job_id = args.p
+n_jobs = args.n
 
 verbose = True
+
+if batch:
+    verbose = False
 
 def get_attributes(url, tree_id, verbose = False):
 
@@ -55,15 +72,27 @@ def get_attributes(url, tree_id, verbose = False):
                 attributes[attribute] = dictionary[attribute]
 
             # attributes['url'] = url
-            attributes['url'] = tree_id
+            attributes['url'] = int(tree_id)
 
             return attributes
 
 
 start_time = time.time()
 N_samples = 245000
+
+N_start = 1
+N_end = N_samples
+
+if batch:
+    per_job = int(N_samples/n_jobs)
+    N_start = job_id*per_job + 1
+    N_end = N_start + per_job 
+
 print("Scraping...")
-for tree_id in range(1, N_samples):
+counts = 0
+for tree_id in range(N_start, N_end):
+    counts += 1
+    print(tree_id)
     try:
         attributes = get_attributes(f"https://ati.woodlandtrust.org.uk/tree-search/tree?treeid={tree_id}#/", tree_id)
         if verbose:
@@ -79,19 +108,23 @@ for tree_id in range(1, N_samples):
         if verbose:
             print(f"Broken {tree_id}")
         pass
-
-    if tree_id % 25 == 0 and tree_id > 0:
+    
+    if (counts % 10 == 0 and counts > 0) or (counts==3):
         current_time = time.time()
         elapsed_time = current_time-start_time
         try:
-            print(f"{tree_id}, {df.shape}, elapsed_time: {elapsed_time}, time per sample: {elapsed_time/tree_id}, expected time remaining: {(N_samples-tree_id)*(elapsed_time/tree_id)}")
+            print(f"\njust processed {tree_id}")
+            print(f"{counts}, {df.shape}, elapsed_time: {elapsed_time}, time per sample: {elapsed_time/tree_id}, expected time remaining: {(N_samples-tree_id)*(elapsed_time/tree_id)}")
+            df.to_csv(f'trees_{job_id}.csv',header=False, index=False)
+            shutil.copyfile(f'trees_{job_id}.csv', f'/shared/scratch/am13743/trees/trees_{job_id}.csv')
         except:
             pass
+        
+if not batch:
+    print(df)
 
-print(df)
-
-df.to_csv('trees.csv',header=False, index=False)
-
+df.to_csv(f'trees_{job_id}.csv',header=False, index=False)
+shutil.copyfile(f'trees_{job_id}.csv', f'/shared/scratch/am13743/trees/trees_{job_id}.csv')
 
 
 
