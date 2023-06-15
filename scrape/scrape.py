@@ -47,10 +47,10 @@ print("Scraping...")
 for tree_id in range(1, N_samples):
     try:
         attributes = get_attributes(f"https://ati.woodlandtrust.org.uk/tree-search/tree?treeid={tree_id}#/")
-        # print('\n\n\n\n\n')
+        print('\n')
         # print(tree_id, attributes["species_name"], attributes["longitude"], attributes["latitude"], f'distance from Bristol: {geopy.distance.geodesic(my_location, (attributes["latitude"],attributes["longitude"])).km:.2f} km')
-        # for attribute in attributes:
-            # print(attribute,':  ',attributes[attribute])
+        for attribute in attributes:
+            print(attribute,':  ',attributes[attribute])
         try:
             df_i = pd.DataFrame(attributes, index=[tree_id])
             df = pd.concat([df, df_i])
@@ -60,7 +60,7 @@ for tree_id in range(1, N_samples):
         pass
         # print(f"Broken {tree_id}")
 
-    if tree_id % 100 == 0 and tree_id > 0:
+    if tree_id % 10 == 0 and tree_id > 0:
         current_time = time.time()
         elapsed_time = current_time-start_time
         print(f"{tree_id}, {df.shape}, elapsed_time: {elapsed_time}, time per sample: {elapsed_time/tree_id}, expected time remaining: {(N_samples-tree_id)*(elapsed_time/tree_id)}")
