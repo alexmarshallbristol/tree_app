@@ -1,14 +1,18 @@
 package com.example.progettoembedded
 
+import android.R.attr.name
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.text.Html
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +36,6 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-import android.text.method.LinkMovementMethod
 
 
 class RealTimeFragment : Fragment() {
@@ -61,6 +64,8 @@ class RealTimeFragment : Fragment() {
     private lateinit var tvTreeCard1_dist : MutableList<TextView>
     private lateinit var tvTreeCard1_bear : MutableList<TextView>
     private lateinit var tvTreeCard1_spec : MutableList<TextView>
+    private lateinit var tvTreeCard1_local : MutableList<TextView>
+    private lateinit var tvTreeCard1_public : MutableList<TextView>
     private lateinit var tvTreeCard1_link : MutableList<TextView>
     private lateinit var tvTreeCard1_image : MutableList<ImageView>
 
@@ -309,6 +314,8 @@ class RealTimeFragment : Fragment() {
         tvTreeCard1_dist = mutableListOf()
         tvTreeCard1_bear = mutableListOf()
         tvTreeCard1_spec = mutableListOf()
+        tvTreeCard1_local = mutableListOf()
+        tvTreeCard1_public = mutableListOf()
         tvTreeCard1_link = mutableListOf()
         tvTreeCard1_image = mutableListOf()
 
@@ -316,7 +323,9 @@ class RealTimeFragment : Fragment() {
             tvTreeCard1_dist.add(list_treeCard_views[i].findViewById(R.id.textView4))
             tvTreeCard1_bear.add(list_treeCard_views[i].findViewById(R.id.textView5))
             tvTreeCard1_spec.add(list_treeCard_views[i].findViewById(R.id.textView6))
-            tvTreeCard1_link.add(list_treeCard_views[i].findViewById(R.id.textView7))
+            tvTreeCard1_local.add(list_treeCard_views[i].findViewById(R.id.textView7))
+            tvTreeCard1_public.add(list_treeCard_views[i].findViewById(R.id.textView8))
+            tvTreeCard1_link.add(list_treeCard_views[i].findViewById(R.id.textView9))
             tvTreeCard1_image.add(list_treeCard_views[i].findViewById(R.id.imageView1))
 
         }
@@ -490,19 +499,25 @@ class RealTimeFragment : Fragment() {
                 var bearing = calculateBearing(location1, location2)
                 val dist = results[0].toDouble()
 
-                val tree_species = closestLocations[1].species
+                val tree_species = closestLocations[i].species
 
                 if (dist > 1000) {
                     val new_dist = dist / 1000
-                    tvTreeCard1_dist[i].text = String.format("%.1f km", new_dist)
+                    tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f km", new_dist))
                 } else {
-                    tvTreeCard1_dist[i].text = String.format("%.1f meters", dist)
-                }
-                tvTreeCard1_bear[i].text =
-                    String.format("%.1f degrees east of north", bearing.toDouble())
-                tvTreeCard1_spec[i].text = String.format("%s", tree_species)
+                    tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f meters", dist))
 
-                if (closestLocations[1].TNSI != "False" || closestLocations[1].heritageTree != "False" || closestLocations[1].TotY != "False" || closestLocations[1].championTree != "False") {
+                }
+                tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing.toDouble()))
+                tvTreeCard1_spec[i].text = Html.fromHtml("<b>Species: " + String.format("</b>%s", tree_species))
+
+
+                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", closestLocations[i].localName))
+
+                tvTreeCard1_public[i].text = Html.fromHtml("<b>Access: " + String.format("</b>%s", closestLocations[i].publicAccessibilityStatus))
+
+                if (closestLocations[i].TNSI != "False" || closestLocations[i].heritageTree != "False" || closestLocations[i].TotY != "False" || closestLocations[i].championTree != "False") {
+//                if (tree_species == "Scots pine") {
                     val myImage: Drawable? = ResourcesCompat.getDrawable(
                         requireContext().resources,
                         R.drawable.star, null
@@ -517,7 +532,7 @@ class RealTimeFragment : Fragment() {
                 }
 
                 val link =
-                    "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid=" + closestLocations[1].treeID.dropLast(
+                    "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid=" + closestLocations[i].treeID.dropLast(
                         2
                     ) + "'> Woodland Trust Link </a>"
                 tvTreeCard1_link[i].setClickable(true)
