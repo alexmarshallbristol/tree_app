@@ -68,6 +68,7 @@ class RealTimeFragment : Fragment() {
     private lateinit var tvTreeCard1_public : MutableList<TextView>
     private lateinit var tvTreeCard1_link : MutableList<TextView>
     private lateinit var tvTreeCard1_image : MutableList<ImageView>
+    private lateinit var tvTreeCard1_compass : MutableList<ImageView>
 
 
 
@@ -318,6 +319,7 @@ class RealTimeFragment : Fragment() {
         tvTreeCard1_public = mutableListOf()
         tvTreeCard1_link = mutableListOf()
         tvTreeCard1_image = mutableListOf()
+        tvTreeCard1_compass = mutableListOf()
 
         for (i in 0 until 5) {
             tvTreeCard1_dist.add(list_treeCard_views[i].findViewById(R.id.textView4))
@@ -327,6 +329,7 @@ class RealTimeFragment : Fragment() {
             tvTreeCard1_public.add(list_treeCard_views[i].findViewById(R.id.textView8))
             tvTreeCard1_link.add(list_treeCard_views[i].findViewById(R.id.textView9))
             tvTreeCard1_image.add(list_treeCard_views[i].findViewById(R.id.imageView1))
+            tvTreeCard1_compass.add(list_treeCard_views[i].findViewById(R.id.imageView2))
 
         }
 
@@ -451,6 +454,15 @@ class RealTimeFragment : Fragment() {
         return location1.bearingTo(location2)
     }
 
+    private fun roundBearingToNearestTenDegrees(bearing: Double): Double {
+        val degrees = bearing % 360.0
+        val remainder = degrees % 10.0
+
+        return when {
+            remainder < 5.0 -> degrees - remainder
+            else -> degrees + (10.0 - remainder)
+        }
+    }
 
 
     /**
@@ -469,9 +481,12 @@ class RealTimeFragment : Fragment() {
 //            tvAlt.text = String.format("%.7f", location.altitude.toDouble())
 
 
+            val current_latitude = location.latitude.toDouble()
+            val current_longitude = location.longitude.toDouble()
+//            val current_latitude = 51.3781
+//            val current_longitude = -2.3597
 
-
-            val referenceLocation = GPSLocation(location.latitude.toDouble(), location.longitude.toDouble(), "None", "None", "None",
+            val referenceLocation = GPSLocation(current_latitude, current_longitude, "None", "None", "None",
                 "None","None","None","None","None","None") // Example reference location (San Francisco)
             val fileName = "trees.txt"
             val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
@@ -479,8 +494,8 @@ class RealTimeFragment : Fragment() {
             val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 5)
 
             var location1 = Location("provider")
-            location1.latitude = location.latitude.toDouble()
-            location1.longitude = location.longitude.toDouble()
+            location1.latitude = current_latitude
+            location1.longitude = current_longitude
 
             var location2 = Location("provider")
             var results = FloatArray(1)
@@ -496,7 +511,24 @@ class RealTimeFragment : Fragment() {
                     results
                 )
 
-                var bearing = calculateBearing(location1, location2)
+                val bearing = calculateBearing(location1, location2)
+                var bearing_Double = roundBearingToNearestTenDegrees(bearing.toDouble())
+                var bearing_Double_file_name = bearing_Double
+                if (bearing_Double < 0) {
+                    bearing_Double_file_name = bearing_Double_file_name + 360
+                }
+                val bearing_Double_file_name_int = bearing_Double_file_name.toInt()
+                val compass_resourceId = resources.getIdentifier(String.format("deg_"+bearing_Double_file_name_int.toString()), "drawable", requireContext().packageName)
+                val myImage: Drawable? = ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    compass_resourceId, null
+                )
+                tvTreeCard1_compass[i].setImageDrawable(myImage)
+
+
+
+
+
                 val dist = results[0].toDouble()
 
                 val tree_species = closestLocations[i].species
@@ -508,7 +540,8 @@ class RealTimeFragment : Fragment() {
                     tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f meters", dist))
 
                 }
-                tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing.toDouble()))
+
+                tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing_Double))
                 tvTreeCard1_spec[i].text = Html.fromHtml("<b>Species: " + String.format("</b>%s", tree_species))
 
 
