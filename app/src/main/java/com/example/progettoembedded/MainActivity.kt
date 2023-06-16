@@ -44,6 +44,8 @@ The workflow has been modified a bit, but everything has been explained properly
  */
 class MainActivity : AppCompatActivity() {
 
+    val species_options = arrayOf("Common beech", "Ash")
+
     /**
      * Request permission launcher. Activity result handler after permissions request
      */
