@@ -336,7 +336,7 @@ class RealTimeFragment : Fragment() {
         }
 
 
-        val species_options = arrayOf("All species", "Common beech", "Ash")
+        val species_options = arrayOf("All species", "Alder", "Ash", "Beech", "Birch", "Cedar of Lebanon", "Common ash", "Common beech", "Common hawthorn", "Common horse chestnut", "Common juniper", "Common lime", "Common sycamore", "Common yew", "Crack willow", "Douglas fir", "Downy birch", "Field maple", "Giant sequoia", "Hawthorn", "Hazel", "Holly", "Hornbeam", "Lime", "London plane", "Oak", "Pedunculate oak", "Rowan", "Scots pine", "Sessile oak", "Silver birch", "Small leaved lime", "Sweet chestnut", "Turkey oak", "Wild apple", "Wild black poplar", "Wild cherry", "Willow", "Yew")
 
         val spinner: Spinner = view.findViewById(R.id.spinner)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, species_options)
