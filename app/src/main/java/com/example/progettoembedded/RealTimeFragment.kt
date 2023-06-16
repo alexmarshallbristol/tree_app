@@ -62,6 +62,18 @@ class RealTimeFragment : Fragment() {
     private lateinit var tvDis2 : TextView
     private lateinit var tvDis3 : TextView
 
+    private lateinit var tvTreeCard1_dist : TextView
+    private lateinit var tvTreeCard1_bear : TextView
+    private lateinit var tvTreeCard1_spec : TextView
+
+    private lateinit var tvTreeCard2_dist : TextView
+    private lateinit var tvTreeCard2_bear : TextView
+    private lateinit var tvTreeCard2_spec : TextView
+
+    private lateinit var tvTreeCard3_dist : TextView
+    private lateinit var tvTreeCard3_bear : TextView
+    private lateinit var tvTreeCard3_spec : TextView
+
     /**
      * It tells if we should center the camera of the map every time a position is retrieved. If the user has moved the map, we want to keep
      * the settings made to the map by the user themselves instead of re-centering
@@ -113,23 +125,23 @@ class RealTimeFragment : Fragment() {
         val sample = model.readerService!!.currentSample
         //Update the 3 cards shown at the top of the screen
         updateCards(sample)
-        //If latitude and longitude are valid
-        if (sample.latitude != null && sample.longitude != null) {
-            //if the map has been initialized
-            if(initialized) {
-                //Insert the marker with the current position of the user
-                insertMarker()
-                //Center the camera to where the marker is placed if we should do so (the user has not moved the map camera)
-                if (moveCamera) {
-                    moveCameraToCurrentPosition()
-                }
-            }
-        }
-        else if(initialized){
-            //if a valid position is not available, we will not show anything on the map. The information about NoData available
-            //is handled already by the function updateCards()
-            map.clear()
-        }
+//        //If latitude and longitude are valid
+//        if (sample.latitude != null && sample.longitude != null) {
+//            //if the map has been initialized
+//            if(initialized) {
+//                //Insert the marker with the current position of the user
+//                insertMarker()
+//                //Center the camera to where the marker is placed if we should do so (the user has not moved the map camera)
+//                if (moveCamera) {
+//                    moveCameraToCurrentPosition()
+//                }
+//            }
+//        }
+//        else if(initialized){
+//            //if a valid position is not available, we will not show anything on the map. The information about NoData available
+//            //is handled already by the function updateCards()
+//            map.clear()
+//        }
     }
 
     /**
@@ -162,42 +174,42 @@ class RealTimeFragment : Fragment() {
         }
     }
 
-    private val callback = OnMapReadyCallback { googleMap ->
-
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-
-        map = googleMap
-
-        //Disabling zoom +/- controls at the bottom right-hand side of the screen
-        map.uiSettings.isZoomControlsEnabled = false
-        //The user cannot tilt the map
-        map.uiSettings.isTiltGesturesEnabled = false
-
-        map.setOnCameraMoveStartedListener {
-            //If the camera has been moved by the user with a gesture, we have to stop to recenter the map every time a new location
-            //is available
-            if (it == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-                Log.d("moveCamera", "Camera moving")
-                moveCamera = false
-            }
-        }
-
-        //insert the marker in the current position
-        insertMarker()
-
-        //The map has been initialized
-        initialized = true
-
-        updateUI()
-    }
+//    private val callback = OnMapReadyCallback { googleMap ->
+//
+//        /**
+//         * Manipulates the map once available.
+//         * This callback is triggered when the map is ready to be used.
+//         * This is where we can add markers or lines, add listeners or move the camera.
+//         * In this case, we just add a marker near Sydney, Australia.
+//         * If Google Play services is not installed on the device, the user will be prompted to
+//         * install it inside the SupportMapFragment. This method will only be triggered once the
+//         * user has installed Google Play services and returned to the app.
+//         */
+//
+//        map = googleMap
+//
+//        //Disabling zoom +/- controls at the bottom right-hand side of the screen
+//        map.uiSettings.isZoomControlsEnabled = false
+//        //The user cannot tilt the map
+//        map.uiSettings.isTiltGesturesEnabled = false
+//
+//        map.setOnCameraMoveStartedListener {
+//            //If the camera has been moved by the user with a gesture, we have to stop to recenter the map every time a new location
+//            //is available
+//            if (it == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+//                Log.d("moveCamera", "Camera moving")
+//                moveCamera = false
+//            }
+//        }
+//
+//        //insert the marker in the current position
+//        insertMarker()
+//
+//        //The map has been initialized
+//        initialized = true
+//
+//        updateUI()
+//    }
 
     /**
      * When the fragments is in the foreground and receives the input from the user we subscribe for updates from the service again and
@@ -258,16 +270,15 @@ class RealTimeFragment : Fragment() {
         //Inflating layout from the resources
         val view = inflater.inflate(R.layout.fragment_real_time, container,false)
 
-        //Requires the map asynchronously (operation done in the main thread)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(callback)
+//        //Requires the map asynchronously (operation done in the main thread)
+//        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+//        mapFragment.getMapAsync(callback)
 
 
         //Setting up cards programmatically
-        val listLabel : List<String> = listOf(getString(R.string.label_longitude),getString(R.string.label_latitude),getString(
-                    R.string.label_altitude),getString(R.string.label_distance),getString(R.string.label_distance2),getString(R.string.label_distance3))
-        val listImg : List<Int> = listOf(R.drawable.ic_longitude,R.drawable.ic_latitude,R.drawable.ic_altitude,R.drawable.ic_altitude,R.drawable.ic_altitude,R.drawable.ic_altitude)
-        val list : List<FrameLayout> = listOf(view.findViewById(R.id.longitude),view.findViewById(R.id.latitude),view.findViewById(R.id.altitude),view.findViewById(R.id.distance),view.findViewById(R.id.distance2),view.findViewById(R.id.distance3))
+        val listLabel : List<String> = listOf(getString(R.string.label_distance),getString(R.string.label_distance2),getString(R.string.label_distance3))
+        val listImg : List<Int> = listOf(R.drawable.ic_altitude,R.drawable.ic_altitude,R.drawable.ic_altitude)
+        val list : List<FrameLayout> = listOf(view.findViewById(R.id.distance),view.findViewById(R.id.distance2),view.findViewById(R.id.distance3))
         //Iterate through the frameLayouts and inserts the labels, icons, etc.
         //With a loop the initialization is smoother and easier to understand
         for ((index, e) in list.withIndex()) {
@@ -281,41 +292,58 @@ class RealTimeFragment : Fragment() {
         }
 
         //Gets the textViews
-        tvLong = list[0].findViewById(R.id.value)
-        tvLat = list[1].findViewById(R.id.value)
-        tvAlt = list[2].findViewById(R.id.value)
-        tvDis = list[3].findViewById(R.id.value)
-        tvDis2 = list[4].findViewById(R.id.value)
-        tvDis3 = list[5].findViewById(R.id.value)
+//        tvLong = list[0].findViewById(R.id.value)
+//        tvLat = list[1].findViewById(R.id.value)
+//        tvAlt = list[2].findViewById(R.id.value)
+        tvDis = list[0].findViewById(R.id.value)
+        tvDis2 = list[1].findViewById(R.id.value)
+        tvDis3 = list[2].findViewById(R.id.value)
 
-        //Button to center the map
-        val button = view.findViewById<Button>(R.id.center_button)
-        button.setOnClickListener {
-            if(model.mBound && model.readerService!!.isCollectingLocation){
-                if(initialized)
-                    //If the map was initialized and the service is bound, then move to the current position
-                    moveCameraToCurrentPosition()
-            }
-            else {
-                //The following code prevents from many toasts to be queued when the user clicks several times on the button center
-                //when the map is not ready (for example the GPS is deactivated or we are just waiting for the map to load).
+        val list_treecard1 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card1))
+        tvTreeCard1_dist = list_treecard1[0].findViewById(R.id.textView4)
+        tvTreeCard1_bear = list_treecard1[0].findViewById(R.id.textView5)
+        tvTreeCard1_spec = list_treecard1[0].findViewById(R.id.textView6)
 
-                //Cancel the previous toast from the queue
-                toast?.cancel()
+        val list_treecard2 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card2))
+        tvTreeCard2_dist = list_treecard2[0].findViewById(R.id.textView4)
+        tvTreeCard2_bear = list_treecard2[0].findViewById(R.id.textView5)
+        tvTreeCard2_spec = list_treecard2[0].findViewById(R.id.textView6)
 
-                //Create a new toast
-                toast = Toast.makeText(
-                    requireContext(),
-                    getString(R.string.last_location_missing),
-                    Toast.LENGTH_SHORT
-                )
+        val list_treecard3 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card3))
+        tvTreeCard3_dist = list_treecard3[0].findViewById(R.id.textView4)
+        tvTreeCard3_bear = list_treecard3[0].findViewById(R.id.textView5)
+        tvTreeCard3_spec = list_treecard3[0].findViewById(R.id.textView6)
 
-                //Show the new toast
-                toast?.show()
-            }
 
-            moveCamera = true
-        }
+
+//        //Button to center the map
+//        val button = view.findViewById<Button>(R.id.center_button)
+//        button.setOnClickListener {
+//            if(model.mBound && model.readerService!!.isCollectingLocation){
+//                if(initialized)
+//                    //If the map was initialized and the service is bound, then move to the current position
+//                    moveCameraToCurrentPosition()
+//            }
+//            else {
+//                //The following code prevents from many toasts to be queued when the user clicks several times on the button center
+//                //when the map is not ready (for example the GPS is deactivated or we are just waiting for the map to load).
+//
+//                //Cancel the previous toast from the queue
+//                toast?.cancel()
+//
+//                //Create a new toast
+//                toast = Toast.makeText(
+//                    requireContext(),
+//                    getString(R.string.last_location_missing),
+//                    Toast.LENGTH_SHORT
+//                )
+//
+//                //Show the new toast
+//                toast?.show()
+//            }
+//
+//            moveCamera = true
+//        }
 
         return view
     }
@@ -387,63 +415,102 @@ class RealTimeFragment : Fragment() {
         if (location.longitude != null && location.latitude != null && location.altitude != null) {
             //Keeping always 7 decimal digits. Without this conversion a number such as 7.2, would be printed as 7.2 instead of
                 //7.2000000 (better to show the same number of digits for every number, it is also nicer to see by the user themselves)
-            tvLong.text = String.format("%.7f", location.longitude.toDouble())
-            tvLat.text = String.format("%.7f", location.latitude.toDouble())
-            tvAlt.text = String.format("%.7f", location.altitude.toDouble())
+//            tvLong.text = String.format("%.7f", location.longitude.toDouble())
+//            tvLat.text = String.format("%.7f", location.latitude.toDouble())
+//            tvAlt.text = String.format("%.7f", location.altitude.toDouble())
 
 
             val referenceLocation = GPSLocation(location.latitude.toDouble(), location.longitude.toDouble(), "myLocation") // Example reference location (San Francisco)
-//            val fileName = "gpsLocations.txt"
             val fileName = "trees.txt"
             val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
-            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 1)
+            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 3)
 
+            var tree_lat = closestLocations[0].latitude
+            var tree_long = closestLocations[0].longitude
+            var tree_species = closestLocations[0].species
+            var results = FloatArray(1)
+            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), tree_lat, tree_long, results)
 
-//            val bris_lat = 51.4545
-//            val bris_long = -2.587
-            val bris_lat = closestLocations[0].latitude
-            val bris_long = closestLocations[0].longitude
-//            val bris_lat = gpsLocations[0].latitude
-//            val bris_long = gpsLocations[0].longitude
-            val bris_species = closestLocations[0].species
-            val results = FloatArray(1)
-            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), bris_lat, bris_long, results)
+            var location1 = Location("provider")
+            location1.latitude = location.latitude.toDouble()
+            location1.longitude = location.longitude.toDouble()
 
-            val dist = results[0].toDouble()
+            var location2 = Location("provider")
+            location2.latitude = closestLocations[0].latitude
+            location2.longitude = closestLocations[0].longitude
+
+            var bearing = calculateBearing(location1, location2)
+            var dist = results[0].toDouble()
             if (dist > 1000) {
                 val new_dist = dist/1000
                 tvDis.text = String.format("%.1f km", new_dist)
             } else {
                 tvDis.text = String.format("%.1f meters", dist)
             }
-
-//            tvDis.text = String.format("%.1f meters", results[0].toDouble())
-
-            val location1 = Location("provider")
-            location1.latitude = location.latitude.toDouble()
-            location1.longitude = location.longitude.toDouble()
-
-            val location2 = Location("provider")
-//            location2.latitude = 51.4545
-//            location2.longitude = -2.587
-            location2.latitude = closestLocations[0].latitude
-            location2.longitude = closestLocations[0].longitude
-
-            val bearing = calculateBearing(location1, location2)
-
-            val bath_lat = 51.3781
-            val bath_long = -2.3597
-            val results2 = FloatArray(1)
-            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), bath_lat, bath_long, results2)
-//            tvDis2.text = String.format("%.1f meters", results2[0].toDouble())
             tvDis2.text = String.format("%.1f degrees east of north", bearing.toDouble())
+            tvDis3.text = String.format("%s", tree_species)
 
-            val cardiff_lat = 51.4837
-            val cardiff_long = -3.1681
-            val results3 = FloatArray(1)
-            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), cardiff_lat, cardiff_long, results3)
-//            tvDis3.text = String.format("%.1f meters", results3[0].toDouble())
-            tvDis3.text = String.format("%s", bris_species)
+
+
+
+            if (dist > 1000) {
+                val new_dist = dist/1000
+                tvTreeCard1_dist.text = String.format("%.1f km", new_dist)
+            } else {
+                tvTreeCard1_dist.text = String.format("%.1f meters", dist)
+            }
+            tvTreeCard1_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
+            tvTreeCard1_spec.text = String.format("%s", tree_species)
+
+
+
+
+            location2.latitude = closestLocations[1].latitude
+            location2.longitude = closestLocations[1].longitude
+            results = FloatArray(1)
+            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), location2.latitude, location2.longitude, results)
+
+            bearing = calculateBearing(location1, location2)
+            dist = results[0].toDouble()
+
+            tree_species = closestLocations[1].species
+
+            if (dist > 1000) {
+                val new_dist = dist/1000
+                tvTreeCard2_dist.text = String.format("%.1f km", new_dist)
+            } else {
+                tvTreeCard2_dist.text = String.format("%.1f meters", dist)
+            }
+            tvTreeCard2_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
+            tvTreeCard2_spec.text = String.format("%s", tree_species)
+
+
+
+
+
+            location2.latitude = closestLocations[2].latitude
+            location2.longitude = closestLocations[2].longitude
+            results = FloatArray(1)
+            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), location2.latitude, location2.longitude, results)
+
+            bearing = calculateBearing(location1, location2)
+            dist = results[0].toDouble()
+
+            tree_species = closestLocations[2].species
+
+            if (dist > 1000) {
+                val new_dist = dist/1000
+                tvTreeCard3_dist.text = String.format("%.1f km", new_dist)
+            } else {
+                tvTreeCard3_dist.text = String.format("%.1f meters", dist)
+            }
+            tvTreeCard3_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
+            tvTreeCard3_spec.text = String.format("%s", tree_species)
+
+
+
+
+
 
 
             Log.d("Second", location.timestamp.seconds.toString())
@@ -454,6 +521,19 @@ class RealTimeFragment : Fragment() {
             tvDis.text = resources.getString(R.string.label_nodata)
             tvDis2.text = resources.getString(R.string.label_nodata)
             tvDis3.text = resources.getString(R.string.label_nodata)
+
+            tvTreeCard1_dist.text = resources.getString(R.string.label_nodata)
+            tvTreeCard1_bear.text = resources.getString(R.string.label_nodata)
+            tvTreeCard1_spec.text = resources.getString(R.string.label_nodata)
+
+            tvTreeCard2_dist.text = resources.getString(R.string.label_nodata)
+            tvTreeCard2_bear.text = resources.getString(R.string.label_nodata)
+            tvTreeCard2_spec.text = resources.getString(R.string.label_nodata)
+
+            tvTreeCard3_dist.text = resources.getString(R.string.label_nodata)
+            tvTreeCard3_bear.text = resources.getString(R.string.label_nodata)
+            tvTreeCard3_spec.text = resources.getString(R.string.label_nodata)
+
             Log.d("Second", "No data")
         }
     }
