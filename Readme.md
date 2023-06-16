@@ -11,4 +11,5 @@ TO DO
 * click through to info page for trees?
 * colour code species?
 * remove any duplicates
+* Google maps link to GPS
 * add map (hard)
