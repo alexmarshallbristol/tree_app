@@ -535,9 +535,12 @@ class RealTimeFragment : Fragment() {
                     "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid=" + closestLocations[i].treeID.dropLast(
                         2
                     ) + "'> Woodland Trust Link </a>"
+                val google_link =
+                    "<a href='https://www.google.com/maps/search/?api=1&query=" + location2.latitude + "%2C" + location2.longitude + "'> Google Maps Link </a>"
+
                 tvTreeCard1_link[i].setClickable(true)
                 tvTreeCard1_link[i].setMovementMethod(LinkMovementMethod.getInstance());
-                tvTreeCard1_link[i].setText(Html.fromHtml(link))
+                tvTreeCard1_link[i].setText(Html.fromHtml(link + " - " + google_link))
             }
 
 

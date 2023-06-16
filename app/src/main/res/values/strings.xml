@@ -13,7 +13,7 @@
     <string name="label_distance3">Species</string>
     <string name="label_nodata">No Data</string>
     <string name="menu_item_live">Nearest Ancient Trees</string>
-    <string name="menu_item_records">Records</string>
+    <string name="menu_item_records">Info</string>
     <string name="channel_name">Location Reader Service</string>
     <string name="channel_description">Location is being collected periodically</string>
     <string name="notification_title">&app_name; is tracking you</string>

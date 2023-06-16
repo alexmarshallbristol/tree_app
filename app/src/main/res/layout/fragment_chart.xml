@@ -1,29 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".RealTimeFragment"
     android:orientation="vertical">
 
-    <include android:id="@+id/map_button"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        layout = "@layout/map_button"/>
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/altitude_chart"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="50dp"
-        android:layout_weight="0" />
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:padding="16dp"
+        tools:context=".RealTimeFragment"
+        android:orientation="vertical">
 
 
-</LinearLayout>
+
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Points to Note: \n\t There is "-->
+<!--            android:textSize="24sp"-->
+<!--            android:textColor="@android:color/black" />-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Release v1.0 (16 Jun 2023) \n\n\n\n Notes: \n\n\t • A star on a tree card indicates it has won an award. \n\n\t • Only 35k out of 250k trees are added. \n\n\t • There may be duplicate trees (will deal with these later). \n\n\t • Code is here (https://github.com/alexmarshallbristol/tree_app), starting point (https://github.com/AlbertoFormaggio1/Where-Am-I/). \n\n\n\n\t Cheers"
+            android:textSize="24sp"
+            android:textColor="@android:color/black" />
+
+<!--        """-->
+<!--        • First point-->
+<!--        • Second point-->
+<!--        • Third point-->
+<!--        """-->
+
+
+    </LinearLayout>
+</ScrollView>
