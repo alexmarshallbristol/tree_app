@@ -35,7 +35,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigationrail.NavigationRailView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
+import android.widget.Spinner
+import android.widget.ArrayAdapter
 /*
 For handling the request of permissions, we have done as said by the Android documentation:
 https://developer.android.com/training/permissions/requesting
@@ -43,8 +44,6 @@ https://developer.android.com/training/permissions/requesting
 The workflow has been modified a bit, but everything has been explained properly as a comment in the dedicated methods
  */
 class MainActivity : AppCompatActivity() {
-
-    val species_options = arrayOf("Common beech", "Ash")
 
     /**
      * Request permission launcher. Activity result handler after permissions request
@@ -136,7 +135,6 @@ class MainActivity : AppCompatActivity() {
         //The name displayed on the appBar needs to be the name of the current fragment
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.fragmentRealTime, R.id.fragmentList))
         setupActionBarWithNavController(navController, appBarConfiguration)
-
 
     }
 
