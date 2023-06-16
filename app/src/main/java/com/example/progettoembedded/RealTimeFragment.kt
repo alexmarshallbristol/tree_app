@@ -6,12 +6,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.location.Location
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,20 +25,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import java.io.File
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-import java.io.FileInputStream
-import java.io.IOException
-import java.io.InputStream
-import android.location.Location
+import android.text.method.LinkMovementMethod
+
 
 class RealTimeFragment : Fragment() {
     /**
@@ -65,14 +61,20 @@ class RealTimeFragment : Fragment() {
     private lateinit var tvTreeCard1_dist : TextView
     private lateinit var tvTreeCard1_bear : TextView
     private lateinit var tvTreeCard1_spec : TextView
+    private lateinit var tvTreeCard1_link : TextView
+    private lateinit var tvTreeCard1_image : ImageView
 
     private lateinit var tvTreeCard2_dist : TextView
     private lateinit var tvTreeCard2_bear : TextView
     private lateinit var tvTreeCard2_spec : TextView
+    private lateinit var tvTreeCard2_link : TextView
+    private lateinit var tvTreeCard2_image : ImageView
 
     private lateinit var tvTreeCard3_dist : TextView
     private lateinit var tvTreeCard3_bear : TextView
     private lateinit var tvTreeCard3_spec : TextView
+    private lateinit var tvTreeCard3_link : TextView
+    private lateinit var tvTreeCard3_image : ImageView
 
     /**
      * It tells if we should center the camera of the map every time a position is retrieved. If the user has moved the map, we want to keep
@@ -303,16 +305,23 @@ class RealTimeFragment : Fragment() {
         tvTreeCard1_dist = list_treecard1[0].findViewById(R.id.textView4)
         tvTreeCard1_bear = list_treecard1[0].findViewById(R.id.textView5)
         tvTreeCard1_spec = list_treecard1[0].findViewById(R.id.textView6)
+        tvTreeCard1_link = list_treecard1[0].findViewById(R.id.textView7)
+        tvTreeCard1_image = list_treecard1[0].findViewById(R.id.imageView1)
+
 
         val list_treecard2 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card2))
         tvTreeCard2_dist = list_treecard2[0].findViewById(R.id.textView4)
         tvTreeCard2_bear = list_treecard2[0].findViewById(R.id.textView5)
         tvTreeCard2_spec = list_treecard2[0].findViewById(R.id.textView6)
+        tvTreeCard2_link = list_treecard2[0].findViewById(R.id.textView7)
+        tvTreeCard2_image = list_treecard2[0].findViewById(R.id.imageView1)
 
         val list_treecard3 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card3))
         tvTreeCard3_dist = list_treecard3[0].findViewById(R.id.textView4)
         tvTreeCard3_bear = list_treecard3[0].findViewById(R.id.textView5)
         tvTreeCard3_spec = list_treecard3[0].findViewById(R.id.textView6)
+        tvTreeCard3_link = list_treecard3[0].findViewById(R.id.textView7)
+        tvTreeCard3_image = list_treecard3[0].findViewById(R.id.imageView1)
 
 
 
@@ -349,7 +358,13 @@ class RealTimeFragment : Fragment() {
     }
 
 
-    data class GPSLocation(val latitude: Double, val longitude: Double, val species: String)
+    data class GPSLocation(val latitude: Double, val longitude: Double, val species: String,
+                           val localName: String, val veteranStatus: String, val publicAccessibilityStatus: String,
+                            val TNSI: String, val heritageTree: String, val TotY: String, val championTree: String,
+                           val treeID: String
+                           )
+
+
 
     private fun calculateDistance(location1: GPSLocation, location2: GPSLocation): Double {
         val earthRadius = 6371 // Radius of the earth in kilometers
@@ -386,8 +401,17 @@ class RealTimeFragment : Fragment() {
                     val latitude = parts[0].toDouble()
                     val longitude = parts[1].toDouble()
                     val species = parts[2].toString()
-//                    val species = parts[10].toString()
-                    val gpsLocation = GPSLocation(latitude, longitude, species)
+                    val localName = parts[3].toString()
+                    val veteranStatus = parts[4].toString()
+                    val publicAccessibilityStatus = parts[5].toString()
+                    val TNSI = parts[6].toString()
+                    val heritageTree = parts[7].toString()
+                    val TotY = parts[8].toString()
+                    val championTree = parts[9].toString()
+                    val treeID = parts[10].toString()
+                    val gpsLocation = GPSLocation(latitude, longitude, species,
+                        localName, veteranStatus, publicAccessibilityStatus, TNSI,
+                        heritageTree, TotY, championTree, treeID)
                     gpsLocations.add(gpsLocation)
 //                }
             }
@@ -420,7 +444,8 @@ class RealTimeFragment : Fragment() {
 //            tvAlt.text = String.format("%.7f", location.altitude.toDouble())
 
 
-            val referenceLocation = GPSLocation(location.latitude.toDouble(), location.longitude.toDouble(), "myLocation") // Example reference location (San Francisco)
+            val referenceLocation = GPSLocation(location.latitude.toDouble(), location.longitude.toDouble(), "None", "None", "None",
+                "None","None","None","None","None","None") // Example reference location (San Francisco)
             val fileName = "trees.txt"
             val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
             val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 3)
@@ -452,7 +477,7 @@ class RealTimeFragment : Fragment() {
 
 
 
-
+            ///////////////////////////////
             if (dist > 1000) {
                 val new_dist = dist/1000
                 tvTreeCard1_dist.text = String.format("%.1f km", new_dist)
@@ -463,8 +488,28 @@ class RealTimeFragment : Fragment() {
             tvTreeCard1_spec.text = String.format("%s", tree_species)
 
 
+            if (closestLocations[0].TNSI != "False" || closestLocations[0].heritageTree != "False" || closestLocations[0].TotY != "False" || closestLocations[0].championTree != "False") {
+                val myImage: Drawable? = ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.star, null
+                )
+                tvTreeCard1_image.setImageDrawable(myImage)
+            }
+            else{
+                val myImage: Drawable? = ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.empty, null
+                )
+                tvTreeCard1_image.setImageDrawable(myImage)
+            }
 
 
+            var link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[0].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
+            tvTreeCard1_link.setClickable(true)
+            tvTreeCard1_link.setMovementMethod(LinkMovementMethod.getInstance());
+            tvTreeCard1_link.setText(Html.fromHtml(link))
+
+            ///////////////////////////////
             location2.latitude = closestLocations[1].latitude
             location2.longitude = closestLocations[1].longitude
             results = FloatArray(1)
@@ -485,6 +530,27 @@ class RealTimeFragment : Fragment() {
             tvTreeCard2_spec.text = String.format("%s", tree_species)
 
 
+            if (closestLocations[1].TNSI != "False" || closestLocations[1].heritageTree != "False" || closestLocations[1].TotY != "False" || closestLocations[1].championTree != "False") {
+                val myImage: Drawable? = ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.star, null
+                )
+                tvTreeCard2_image.setImageDrawable(myImage)
+            }
+            else{
+                val myImage: Drawable? = ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.empty, null
+                )
+                tvTreeCard2_image.setImageDrawable(myImage)
+            }
+
+            link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[1].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
+            tvTreeCard2_link.setClickable(true)
+            tvTreeCard2_link.setMovementMethod(LinkMovementMethod.getInstance());
+            tvTreeCard2_link.setText(Html.fromHtml(link))
+
+            ///////////////////////////////
 
 
 
@@ -507,7 +573,27 @@ class RealTimeFragment : Fragment() {
             tvTreeCard3_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
             tvTreeCard3_spec.text = String.format("%s", tree_species)
 
+            if (closestLocations[2].TNSI != "False" || closestLocations[2].heritageTree != "False" || closestLocations[2].TotY != "False" || closestLocations[2].championTree != "False") {
+                val myImage: Drawable? = ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.star, null
+                )
+                tvTreeCard3_image.setImageDrawable(myImage)
+            }
+            else{
+                val myImage: Drawable? = ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.empty, null
+                )
+                tvTreeCard3_image.setImageDrawable(myImage)
+            }
 
+            link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[2].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
+            tvTreeCard3_link.setClickable(true)
+            tvTreeCard3_link.setMovementMethod(LinkMovementMethod.getInstance());
+            tvTreeCard3_link.setText(Html.fromHtml(link))
+
+            ///////////////////////////////
 
 
 
