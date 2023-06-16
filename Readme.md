@@ -5,10 +5,10 @@
 TO DO
 
 * Get all trees into database
-* drop down box to filter based on trees awards (verteran status/special status)
-* private land?
+<!-- * drop down box to filter based on trees awards (verteran status/special status) -->
+* button to turn on only trees that have won awards
 * filter by species
-* add multiple trees - click through for info page
-* remove GPS location from info page
-* add URL
+* click through to info page for trees?
+* colour code species?
+* remove any duplicates
 * add map (hard)
