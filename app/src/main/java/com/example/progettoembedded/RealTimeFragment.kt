@@ -58,23 +58,25 @@ class RealTimeFragment : Fragment() {
     private lateinit var tvDis2 : TextView
     private lateinit var tvDis3 : TextView
 
-    private lateinit var tvTreeCard1_dist : TextView
-    private lateinit var tvTreeCard1_bear : TextView
-    private lateinit var tvTreeCard1_spec : TextView
-    private lateinit var tvTreeCard1_link : TextView
-    private lateinit var tvTreeCard1_image : ImageView
+    private lateinit var tvTreeCard1_dist : MutableList<TextView>
+    private lateinit var tvTreeCard1_bear : MutableList<TextView>
+    private lateinit var tvTreeCard1_spec : MutableList<TextView>
+    private lateinit var tvTreeCard1_link : MutableList<TextView>
+    private lateinit var tvTreeCard1_image : MutableList<ImageView>
 
-    private lateinit var tvTreeCard2_dist : TextView
-    private lateinit var tvTreeCard2_bear : TextView
-    private lateinit var tvTreeCard2_spec : TextView
-    private lateinit var tvTreeCard2_link : TextView
-    private lateinit var tvTreeCard2_image : ImageView
 
-    private lateinit var tvTreeCard3_dist : TextView
-    private lateinit var tvTreeCard3_bear : TextView
-    private lateinit var tvTreeCard3_spec : TextView
-    private lateinit var tvTreeCard3_link : TextView
-    private lateinit var tvTreeCard3_image : ImageView
+
+//    private lateinit var tvTreeCard2_dist : TextView
+//    private lateinit var tvTreeCard2_bear : TextView
+//    private lateinit var tvTreeCard2_spec : TextView
+//    private lateinit var tvTreeCard2_link : TextView
+//    private lateinit var tvTreeCard2_image : ImageView
+//
+//    private lateinit var tvTreeCard3_dist : TextView
+//    private lateinit var tvTreeCard3_bear : TextView
+//    private lateinit var tvTreeCard3_spec : TextView
+//    private lateinit var tvTreeCard3_link : TextView
+//    private lateinit var tvTreeCard3_image : ImageView
 
     /**
      * It tells if we should center the camera of the map every time a position is retrieved. If the user has moved the map, we want to keep
@@ -277,51 +279,65 @@ class RealTimeFragment : Fragment() {
 //        mapFragment.getMapAsync(callback)
 
 
-        //Setting up cards programmatically
-        val listLabel : List<String> = listOf(getString(R.string.label_distance),getString(R.string.label_distance2),getString(R.string.label_distance3))
-        val listImg : List<Int> = listOf(R.drawable.ic_altitude,R.drawable.ic_altitude,R.drawable.ic_altitude)
-        val list : List<FrameLayout> = listOf(view.findViewById(R.id.distance),view.findViewById(R.id.distance2),view.findViewById(R.id.distance3))
-        //Iterate through the frameLayouts and inserts the labels, icons, etc.
-        //With a loop the initialization is smoother and easier to understand
-        for ((index, e) in list.withIndex()) {
-            val tvLabel = e.findViewById<TextView>(R.id.label)
-            tvLabel.text = listLabel[index]
+//        //Setting up cards programmatically
+//        val listLabel : List<String> = listOf(getString(R.string.label_distance),getString(R.string.label_distance2),getString(R.string.label_distance3))
+//        val listImg : List<Int> = listOf(R.drawable.ic_altitude,R.drawable.ic_altitude,R.drawable.ic_altitude)
+//        val list : List<FrameLayout> = listOf(view.findViewById(R.id.distance),view.findViewById(R.id.distance2),view.findViewById(R.id.distance3))
+//        //Iterate through the frameLayouts and inserts the labels, icons, etc.
+//        //With a loop the initialization is smoother and easier to understand
+//        for ((index, e) in list.withIndex()) {
+//            val tvLabel = e.findViewById<TextView>(R.id.label)
+//            tvLabel.text = listLabel[index]
+//
+//            val imgView = e.findViewById<ImageView>(R.id.imageView)
+//            //Requiring Drawable for better performance
+//            val myImage: Drawable? = ResourcesCompat.getDrawable(requireContext().resources, listImg[index], null)
+//            imgView.setImageDrawable(myImage)
+//        }
+//
+//        //Gets the textViews
+////        tvLong = list[0].findViewById(R.id.value)
+////        tvLat = list[1].findViewById(R.id.value)
+////        tvAlt = list[2].findViewById(R.id.value)
+//        tvDis = list[0].findViewById(R.id.value)
+//        tvDis2 = list[1].findViewById(R.id.value)
+//        tvDis3 = list[2].findViewById(R.id.value)
 
-            val imgView = e.findViewById<ImageView>(R.id.imageView)
-            //Requiring Drawable for better performance
-            val myImage: Drawable? = ResourcesCompat.getDrawable(requireContext().resources, listImg[index], null)
-            imgView.setImageDrawable(myImage)
+        val list_treeCard_views : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card1),
+            view.findViewById(R.id.tree_card2), view.findViewById(R.id.tree_card3),
+            view.findViewById(R.id.tree_card4), view.findViewById(R.id.tree_card5))
+        tvTreeCard1_dist = mutableListOf()
+        tvTreeCard1_bear = mutableListOf()
+        tvTreeCard1_spec = mutableListOf()
+        tvTreeCard1_link = mutableListOf()
+        tvTreeCard1_image = mutableListOf()
+
+        for (i in 0 until 5) {
+            tvTreeCard1_dist.add(list_treeCard_views[i].findViewById(R.id.textView4))
+            tvTreeCard1_bear.add(list_treeCard_views[i].findViewById(R.id.textView5))
+            tvTreeCard1_spec.add(list_treeCard_views[i].findViewById(R.id.textView6))
+            tvTreeCard1_link.add(list_treeCard_views[i].findViewById(R.id.textView7))
+            tvTreeCard1_image.add(list_treeCard_views[i].findViewById(R.id.imageView1))
+
         }
 
-        //Gets the textViews
-//        tvLong = list[0].findViewById(R.id.value)
-//        tvLat = list[1].findViewById(R.id.value)
-//        tvAlt = list[2].findViewById(R.id.value)
-        tvDis = list[0].findViewById(R.id.value)
-        tvDis2 = list[1].findViewById(R.id.value)
-        tvDis3 = list[2].findViewById(R.id.value)
-
-        val list_treecard1 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card1))
-        tvTreeCard1_dist = list_treecard1[0].findViewById(R.id.textView4)
-        tvTreeCard1_bear = list_treecard1[0].findViewById(R.id.textView5)
-        tvTreeCard1_spec = list_treecard1[0].findViewById(R.id.textView6)
-        tvTreeCard1_link = list_treecard1[0].findViewById(R.id.textView7)
-        tvTreeCard1_image = list_treecard1[0].findViewById(R.id.imageView1)
 
 
-        val list_treecard2 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card2))
-        tvTreeCard2_dist = list_treecard2[0].findViewById(R.id.textView4)
-        tvTreeCard2_bear = list_treecard2[0].findViewById(R.id.textView5)
-        tvTreeCard2_spec = list_treecard2[0].findViewById(R.id.textView6)
-        tvTreeCard2_link = list_treecard2[0].findViewById(R.id.textView7)
-        tvTreeCard2_image = list_treecard2[0].findViewById(R.id.imageView1)
-
-        val list_treecard3 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card3))
-        tvTreeCard3_dist = list_treecard3[0].findViewById(R.id.textView4)
-        tvTreeCard3_bear = list_treecard3[0].findViewById(R.id.textView5)
-        tvTreeCard3_spec = list_treecard3[0].findViewById(R.id.textView6)
-        tvTreeCard3_link = list_treecard3[0].findViewById(R.id.textView7)
-        tvTreeCard3_image = list_treecard3[0].findViewById(R.id.imageView1)
+//
+//
+//        val list_treecard2 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card2))
+//        tvTreeCard2_dist = list_treecard2[0].findViewById(R.id.textView4)
+//        tvTreeCard2_bear = list_treecard2[0].findViewById(R.id.textView5)
+//        tvTreeCard2_spec = list_treecard2[0].findViewById(R.id.textView6)
+//        tvTreeCard2_link = list_treecard2[0].findViewById(R.id.textView7)
+//        tvTreeCard2_image = list_treecard2[0].findViewById(R.id.imageView1)
+//
+//        val list_treecard3 : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card3))
+//        tvTreeCard3_dist = list_treecard3[0].findViewById(R.id.textView4)
+//        tvTreeCard3_bear = list_treecard3[0].findViewById(R.id.textView5)
+//        tvTreeCard3_spec = list_treecard3[0].findViewById(R.id.textView6)
+//        tvTreeCard3_link = list_treecard3[0].findViewById(R.id.textView7)
+//        tvTreeCard3_image = list_treecard3[0].findViewById(R.id.imageView1)
 
 
 
@@ -444,156 +460,228 @@ class RealTimeFragment : Fragment() {
 //            tvAlt.text = String.format("%.7f", location.altitude.toDouble())
 
 
+
+
             val referenceLocation = GPSLocation(location.latitude.toDouble(), location.longitude.toDouble(), "None", "None", "None",
                 "None","None","None","None","None","None") // Example reference location (San Francisco)
             val fileName = "trees.txt"
             val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
-            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 3)
 
-            var tree_lat = closestLocations[0].latitude
-            var tree_long = closestLocations[0].longitude
-            var tree_species = closestLocations[0].species
-            var results = FloatArray(1)
-            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), tree_lat, tree_long, results)
+            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 5)
 
             var location1 = Location("provider")
             location1.latitude = location.latitude.toDouble()
             location1.longitude = location.longitude.toDouble()
 
             var location2 = Location("provider")
-            location2.latitude = closestLocations[0].latitude
-            location2.longitude = closestLocations[0].longitude
+            var results = FloatArray(1)
 
-            var bearing = calculateBearing(location1, location2)
-            var dist = results[0].toDouble()
-            if (dist > 1000) {
-                val new_dist = dist/1000
-                tvDis.text = String.format("%.1f km", new_dist)
-            } else {
-                tvDis.text = String.format("%.1f meters", dist)
-            }
-            tvDis2.text = String.format("%.1f degrees east of north", bearing.toDouble())
-            tvDis3.text = String.format("%s", tree_species)
-
-
-
-            ///////////////////////////////
-            if (dist > 1000) {
-                val new_dist = dist/1000
-                tvTreeCard1_dist.text = String.format("%.1f km", new_dist)
-            } else {
-                tvTreeCard1_dist.text = String.format("%.1f meters", dist)
-            }
-            tvTreeCard1_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
-            tvTreeCard1_spec.text = String.format("%s", tree_species)
-
-
-            if (closestLocations[0].TNSI != "False" || closestLocations[0].heritageTree != "False" || closestLocations[0].TotY != "False" || closestLocations[0].championTree != "False") {
-                val myImage: Drawable? = ResourcesCompat.getDrawable(
-                    requireContext().resources,
-                    R.drawable.star, null
+            for (i in 0 until 5) {
+                location2.latitude = closestLocations[i].latitude
+                location2.longitude = closestLocations[i].longitude
+                android.location.Location.distanceBetween(
+                    location.latitude.toDouble(),
+                    location.longitude.toDouble(),
+                    location2.latitude,
+                    location2.longitude,
+                    results
                 )
-                tvTreeCard1_image.setImageDrawable(myImage)
-            }
-            else{
-                val myImage: Drawable? = ResourcesCompat.getDrawable(
-                    requireContext().resources,
-                    R.drawable.empty, null
-                )
-                tvTreeCard1_image.setImageDrawable(myImage)
-            }
 
+                var bearing = calculateBearing(location1, location2)
+                val dist = results[0].toDouble()
 
-            var link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[0].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
-            tvTreeCard1_link.setClickable(true)
-            tvTreeCard1_link.setMovementMethod(LinkMovementMethod.getInstance());
-            tvTreeCard1_link.setText(Html.fromHtml(link))
+                val tree_species = closestLocations[1].species
 
-            ///////////////////////////////
-            location2.latitude = closestLocations[1].latitude
-            location2.longitude = closestLocations[1].longitude
-            results = FloatArray(1)
-            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), location2.latitude, location2.longitude, results)
+                if (dist > 1000) {
+                    val new_dist = dist / 1000
+                    tvTreeCard1_dist[i].text = String.format("%.1f km", new_dist)
+                } else {
+                    tvTreeCard1_dist[i].text = String.format("%.1f meters", dist)
+                }
+                tvTreeCard1_bear[i].text =
+                    String.format("%.1f degrees east of north", bearing.toDouble())
+                tvTreeCard1_spec[i].text = String.format("%s", tree_species)
 
-            bearing = calculateBearing(location1, location2)
-            dist = results[0].toDouble()
+                if (closestLocations[1].TNSI != "False" || closestLocations[1].heritageTree != "False" || closestLocations[1].TotY != "False" || closestLocations[1].championTree != "False") {
+                    val myImage: Drawable? = ResourcesCompat.getDrawable(
+                        requireContext().resources,
+                        R.drawable.star, null
+                    )
+                    tvTreeCard1_image[i].setImageDrawable(myImage)
+                } else {
+                    val myImage: Drawable? = ResourcesCompat.getDrawable(
+                        requireContext().resources,
+                        R.drawable.empty, null
+                    )
+                    tvTreeCard1_image[i].setImageDrawable(myImage)
+                }
 
-            tree_species = closestLocations[1].species
-
-            if (dist > 1000) {
-                val new_dist = dist/1000
-                tvTreeCard2_dist.text = String.format("%.1f km", new_dist)
-            } else {
-                tvTreeCard2_dist.text = String.format("%.1f meters", dist)
-            }
-            tvTreeCard2_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
-            tvTreeCard2_spec.text = String.format("%s", tree_species)
-
-
-            if (closestLocations[1].TNSI != "False" || closestLocations[1].heritageTree != "False" || closestLocations[1].TotY != "False" || closestLocations[1].championTree != "False") {
-                val myImage: Drawable? = ResourcesCompat.getDrawable(
-                    requireContext().resources,
-                    R.drawable.star, null
-                )
-                tvTreeCard2_image.setImageDrawable(myImage)
-            }
-            else{
-                val myImage: Drawable? = ResourcesCompat.getDrawable(
-                    requireContext().resources,
-                    R.drawable.empty, null
-                )
-                tvTreeCard2_image.setImageDrawable(myImage)
+                val link =
+                    "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid=" + closestLocations[1].treeID.dropLast(
+                        2
+                    ) + "'> Woodland Trust Link </a>"
+                tvTreeCard1_link[i].setClickable(true)
+                tvTreeCard1_link[i].setMovementMethod(LinkMovementMethod.getInstance());
+                tvTreeCard1_link[i].setText(Html.fromHtml(link))
             }
 
-            link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[1].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
-            tvTreeCard2_link.setClickable(true)
-            tvTreeCard2_link.setMovementMethod(LinkMovementMethod.getInstance());
-            tvTreeCard2_link.setText(Html.fromHtml(link))
-
-            ///////////////////////////////
 
 
 
-            location2.latitude = closestLocations[2].latitude
-            location2.longitude = closestLocations[2].longitude
-            results = FloatArray(1)
-            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), location2.latitude, location2.longitude, results)
 
-            bearing = calculateBearing(location1, location2)
-            dist = results[0].toDouble()
 
-            tree_species = closestLocations[2].species
 
-            if (dist > 1000) {
-                val new_dist = dist/1000
-                tvTreeCard3_dist.text = String.format("%.1f km", new_dist)
-            } else {
-                tvTreeCard3_dist.text = String.format("%.1f meters", dist)
-            }
-            tvTreeCard3_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
-            tvTreeCard3_spec.text = String.format("%s", tree_species)
-
-            if (closestLocations[2].TNSI != "False" || closestLocations[2].heritageTree != "False" || closestLocations[2].TotY != "False" || closestLocations[2].championTree != "False") {
-                val myImage: Drawable? = ResourcesCompat.getDrawable(
-                    requireContext().resources,
-                    R.drawable.star, null
-                )
-                tvTreeCard3_image.setImageDrawable(myImage)
-            }
-            else{
-                val myImage: Drawable? = ResourcesCompat.getDrawable(
-                    requireContext().resources,
-                    R.drawable.empty, null
-                )
-                tvTreeCard3_image.setImageDrawable(myImage)
-            }
-
-            link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[2].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
-            tvTreeCard3_link.setClickable(true)
-            tvTreeCard3_link.setMovementMethod(LinkMovementMethod.getInstance());
-            tvTreeCard3_link.setText(Html.fromHtml(link))
-
-            ///////////////////////////////
+//
+//            val referenceLocation = GPSLocation(location.latitude.toDouble(), location.longitude.toDouble(), "None", "None", "None",
+//                "None","None","None","None","None","None") // Example reference location (San Francisco)
+//            val fileName = "trees.txt"
+//            val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
+//            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 3)
+//
+//            var tree_lat = closestLocations[0].latitude
+//            var tree_long = closestLocations[0].longitude
+//            var tree_species = closestLocations[0].species
+//            var results = FloatArray(1)
+//            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), tree_lat, tree_long, results)
+//
+//            var location1 = Location("provider")
+//            location1.latitude = location.latitude.toDouble()
+//            location1.longitude = location.longitude.toDouble()
+//
+//            var location2 = Location("provider")
+//            location2.latitude = closestLocations[0].latitude
+//            location2.longitude = closestLocations[0].longitude
+//
+//            var bearing = calculateBearing(location1, location2)
+//            var dist = results[0].toDouble()
+//            if (dist > 1000) {
+//                val new_dist = dist/1000
+//                tvDis.text = String.format("%.1f km", new_dist)
+//            } else {
+//                tvDis.text = String.format("%.1f meters", dist)
+//            }
+//            tvDis2.text = String.format("%.1f degrees east of north", bearing.toDouble())
+//            tvDis3.text = String.format("%s", tree_species)
+//
+//
+//
+//            ///////////////////////////////
+//            if (dist > 1000) {
+//                val new_dist = dist/1000
+//                tvTreeCard1_dist.text = String.format("%.1f km", new_dist)
+//            } else {
+//                tvTreeCard1_dist.text = String.format("%.1f meters", dist)
+//            }
+//            tvTreeCard1_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
+//            tvTreeCard1_spec.text = String.format("%s", tree_species)
+//
+//
+//            if (closestLocations[0].TNSI != "False" || closestLocations[0].heritageTree != "False" || closestLocations[0].TotY != "False" || closestLocations[0].championTree != "False") {
+//                val myImage: Drawable? = ResourcesCompat.getDrawable(
+//                    requireContext().resources,
+//                    R.drawable.star, null
+//                )
+//                tvTreeCard1_image.setImageDrawable(myImage)
+//            }
+//            else{
+//                val myImage: Drawable? = ResourcesCompat.getDrawable(
+//                    requireContext().resources,
+//                    R.drawable.empty, null
+//                )
+//                tvTreeCard1_image.setImageDrawable(myImage)
+//            }
+//
+//
+//            var link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[0].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
+//            tvTreeCard1_link.setClickable(true)
+//            tvTreeCard1_link.setMovementMethod(LinkMovementMethod.getInstance());
+//            tvTreeCard1_link.setText(Html.fromHtml(link))
+//
+//            ///////////////////////////////
+//            location2.latitude = closestLocations[1].latitude
+//            location2.longitude = closestLocations[1].longitude
+//            results = FloatArray(1)
+//            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), location2.latitude, location2.longitude, results)
+//
+//            bearing = calculateBearing(location1, location2)
+//            dist = results[0].toDouble()
+//
+//            tree_species = closestLocations[1].species
+//
+//            if (dist > 1000) {
+//                val new_dist = dist/1000
+//                tvTreeCard2_dist.text = String.format("%.1f km", new_dist)
+//            } else {
+//                tvTreeCard2_dist.text = String.format("%.1f meters", dist)
+//            }
+//            tvTreeCard2_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
+//            tvTreeCard2_spec.text = String.format("%s", tree_species)
+//
+//
+//            if (closestLocations[1].TNSI != "False" || closestLocations[1].heritageTree != "False" || closestLocations[1].TotY != "False" || closestLocations[1].championTree != "False") {
+//                val myImage: Drawable? = ResourcesCompat.getDrawable(
+//                    requireContext().resources,
+//                    R.drawable.star, null
+//                )
+//                tvTreeCard2_image.setImageDrawable(myImage)
+//            }
+//            else{
+//                val myImage: Drawable? = ResourcesCompat.getDrawable(
+//                    requireContext().resources,
+//                    R.drawable.empty, null
+//                )
+//                tvTreeCard2_image.setImageDrawable(myImage)
+//            }
+//
+//            link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[1].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
+//            tvTreeCard2_link.setClickable(true)
+//            tvTreeCard2_link.setMovementMethod(LinkMovementMethod.getInstance());
+//            tvTreeCard2_link.setText(Html.fromHtml(link))
+//
+//            ///////////////////////////////
+//
+//
+//
+//            location2.latitude = closestLocations[2].latitude
+//            location2.longitude = closestLocations[2].longitude
+//            results = FloatArray(1)
+//            android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), location2.latitude, location2.longitude, results)
+//
+//            bearing = calculateBearing(location1, location2)
+//            dist = results[0].toDouble()
+//
+//            tree_species = closestLocations[2].species
+//
+//            if (dist > 1000) {
+//                val new_dist = dist/1000
+//                tvTreeCard3_dist.text = String.format("%.1f km", new_dist)
+//            } else {
+//                tvTreeCard3_dist.text = String.format("%.1f meters", dist)
+//            }
+//            tvTreeCard3_bear.text = String.format("%.1f degrees east of north", bearing.toDouble())
+//            tvTreeCard3_spec.text = String.format("%s", tree_species)
+//
+//            if (closestLocations[2].TNSI != "False" || closestLocations[2].heritageTree != "False" || closestLocations[2].TotY != "False" || closestLocations[2].championTree != "False") {
+//                val myImage: Drawable? = ResourcesCompat.getDrawable(
+//                    requireContext().resources,
+//                    R.drawable.star, null
+//                )
+//                tvTreeCard3_image.setImageDrawable(myImage)
+//            }
+//            else{
+//                val myImage: Drawable? = ResourcesCompat.getDrawable(
+//                    requireContext().resources,
+//                    R.drawable.empty, null
+//                )
+//                tvTreeCard3_image.setImageDrawable(myImage)
+//            }
+//
+//            link = "<a href='https://ati.woodlandtrust.org.uk/tree-search/tree?treeid="+closestLocations[2].treeID.dropLast(2)+"'> Woodland Trust Link </a>"
+//            tvTreeCard3_link.setClickable(true)
+//            tvTreeCard3_link.setMovementMethod(LinkMovementMethod.getInstance());
+//            tvTreeCard3_link.setText(Html.fromHtml(link))
+//
+//            ///////////////////////////////
 
 
 
@@ -601,24 +689,24 @@ class RealTimeFragment : Fragment() {
 
             Log.d("Second", location.timestamp.seconds.toString())
         } else {
-            tvAlt.text = resources.getString(R.string.label_nodata)
-            tvLat.text = resources.getString(R.string.label_nodata)
-            tvLong.text = resources.getString(R.string.label_nodata)
-            tvDis.text = resources.getString(R.string.label_nodata)
-            tvDis2.text = resources.getString(R.string.label_nodata)
-            tvDis3.text = resources.getString(R.string.label_nodata)
+//            tvAlt.text = resources.getString(R.string.label_nodata)
+//            tvLat.text = resources.getString(R.string.label_nodata)
+//            tvLong.text = resources.getString(R.string.label_nodata)
+//            tvDis.text = resources.getString(R.string.label_nodata)
+//            tvDis2.text = resources.getString(R.string.label_nodata)
+//            tvDis3.text = resources.getString(R.string.label_nodata)
 
-            tvTreeCard1_dist.text = resources.getString(R.string.label_nodata)
-            tvTreeCard1_bear.text = resources.getString(R.string.label_nodata)
-            tvTreeCard1_spec.text = resources.getString(R.string.label_nodata)
-
-            tvTreeCard2_dist.text = resources.getString(R.string.label_nodata)
-            tvTreeCard2_bear.text = resources.getString(R.string.label_nodata)
-            tvTreeCard2_spec.text = resources.getString(R.string.label_nodata)
-
-            tvTreeCard3_dist.text = resources.getString(R.string.label_nodata)
-            tvTreeCard3_bear.text = resources.getString(R.string.label_nodata)
-            tvTreeCard3_spec.text = resources.getString(R.string.label_nodata)
+//            tvTreeCard1_dist.text = resources.getString(R.string.label_nodata)
+//            tvTreeCard1_bear.text = resources.getString(R.string.label_nodata)
+//            tvTreeCard1_spec.text = resources.getString(R.string.label_nodata)
+//
+//            tvTreeCard2_dist.text = resources.getString(R.string.label_nodata)
+//            tvTreeCard2_bear.text = resources.getString(R.string.label_nodata)
+//            tvTreeCard2_spec.text = resources.getString(R.string.label_nodata)
+//
+//            tvTreeCard3_dist.text = resources.getString(R.string.label_nodata)
+//            tvTreeCard3_bear.text = resources.getString(R.string.label_nodata)
+//            tvTreeCard3_spec.text = resources.getString(R.string.label_nodata)
 
             Log.d("Second", "No data")
         }

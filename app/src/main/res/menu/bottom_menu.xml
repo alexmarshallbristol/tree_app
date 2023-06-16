@@ -4,8 +4,8 @@
         android:id="@+id/fragmentRealTime"
         android:title="@string/menu_item_live"
         android:icon="@drawable/ic_live_location"/>
-    <item
-        android:id="@+id/fragmentList"
-        android:title="@string/menu_item_records"
-        android:icon="@drawable/ic_list"/>
+<!--    <item-->
+<!--        android:id="@+id/fragmentList"-->
+<!--        android:title="@string/menu_item_records"-->
+<!--        android:icon="@drawable/ic_list"/>-->
 </menu>
