@@ -354,13 +354,14 @@ class RealTimeFragment : Fragment() {
 
             for (line in lines) {
                 val parts = line.split(",")
-                if (parts.size == 3) {
+//                if (parts.size == 3) {
                     val latitude = parts[0].toDouble()
                     val longitude = parts[1].toDouble()
                     val species = parts[2].toString()
+//                    val species = parts[10].toString()
                     val gpsLocation = GPSLocation(latitude, longitude, species)
                     gpsLocations.add(gpsLocation)
-                }
+//                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -395,16 +396,16 @@ class RealTimeFragment : Fragment() {
 //            val fileName = "gpsLocations.txt"
             val fileName = "trees.txt"
             val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
-//            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 1)
+            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 1)
 
 
 //            val bris_lat = 51.4545
 //            val bris_long = -2.587
-//            val bris_lat = closestLocations[0].latitude
-//            val bris_long = closestLocations[0].longitude
-            val bris_lat = gpsLocations[0].latitude
-            val bris_long = gpsLocations[0].longitude
-            val bris_species = gpsLocations[2].species
+            val bris_lat = closestLocations[0].latitude
+            val bris_long = closestLocations[0].longitude
+//            val bris_lat = gpsLocations[0].latitude
+//            val bris_long = gpsLocations[0].longitude
+            val bris_species = closestLocations[0].species
             val results = FloatArray(1)
             android.location.Location.distanceBetween(location.latitude.toDouble(), location.longitude.toDouble(), bris_lat, bris_long, results)
 
@@ -423,10 +424,10 @@ class RealTimeFragment : Fragment() {
             location1.longitude = location.longitude.toDouble()
 
             val location2 = Location("provider")
-            location2.latitude = 51.4545
-            location2.longitude = -2.587
-//            location2.latitude = closestLocations[0].latitude
-//            location2.longitude = closestLocations[0].longitude
+//            location2.latitude = 51.4545
+//            location2.longitude = -2.587
+            location2.latitude = closestLocations[0].latitude
+            location2.longitude = closestLocations[0].longitude
 
             val bearing = calculateBearing(location1, location2)
 
