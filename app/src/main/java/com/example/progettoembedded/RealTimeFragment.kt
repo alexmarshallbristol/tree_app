@@ -515,10 +515,13 @@ class RealTimeFragment : Fragment() {
 //            tvAlt.text = String.format("%.7f", location.altitude.toDouble())
 
 
-            val current_latitude = location.latitude.toDouble()
-            val current_longitude = location.longitude.toDouble()
+//            val current_latitude = location.latitude.toDouble()
+//            val current_longitude = location.longitude.toDouble()
 //            val current_latitude = 51.3781
 //            val current_longitude = -2.3597
+                val current_latitude = 51.4545
+                val current_longitude = -2.5879
+
 
             val referenceLocation = GPSLocation(current_latitude, current_longitude, "None", "None", "None",
                 "None","None","None","None","None","None") // Example reference location (San Francisco)
