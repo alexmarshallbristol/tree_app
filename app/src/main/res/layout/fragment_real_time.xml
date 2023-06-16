@@ -17,48 +17,15 @@
         tools:context=".RealTimeFragment"
         android:orientation="vertical">
 
-    <!--    <include android:id="@+id/longitude"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        layout="@layout/card" />-->
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
 
-    <!--    <include android:id="@+id/latitude"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        layout="@layout/card"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/longitude"-->
-    <!--        android:layout_marginTop="10dp"/>-->
-
-    <!--    <include-->
-    <!--        android:id="@+id/altitude"-->
-    <!--        layout="@layout/card"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="10dp"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/latitude" />-->
-
-    <!--    <include android:id="@+id/distance"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        layout="@layout/card" />-->
-    <!--&lt;!&ndash;        app:layout_constraintTop_toBottomOf="@id/altitude"&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:layout_marginTop="10dp"/>&ndash;&gt;-->
-
-    <!--    <include-->
-    <!--        android:id="@+id/distance2"-->
-    <!--        layout="@layout/card"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="10dp"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/distance" />-->
-
-    <!--    <include-->
-    <!--        android:id="@+id/distance3"-->
-    <!--        layout="@layout/card"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="10dp"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/distance2" />-->
+        <Spinner
+            android:id="@+id/spinner_awards"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
 
         <include
             android:id="@+id/tree_card1"
@@ -102,13 +69,6 @@
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toBottomOf="@id/tree_card4" />
 
-
-        <!--    <include android:id="@+id/map_button"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        android:layout_weight="1"-->
-    <!--        android:layout_marginTop="30dp"-->
-    <!--        layout = "@layout/map_button"/>-->
 
     </LinearLayout>
 </ScrollView>
