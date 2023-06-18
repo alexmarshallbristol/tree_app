@@ -22,6 +22,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.cardview.widget.CardView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -76,6 +77,11 @@ class RealTimeFragment : Fragment() {
     private lateinit var tvTreeCard1_link : MutableList<TextView>
     private lateinit var tvTreeCard1_image : MutableList<ImageView>
     private lateinit var tvTreeCard1_compass : MutableList<ImageView>
+
+    private lateinit var tvTreeCard1_cardView : MutableList<CardView>
+
+    private var current_closest_gpsLocations = mutableListOf<GPSLocation>()
+
 
     private lateinit var selectedOption : String
     private lateinit var selectedOption_award : String
@@ -408,6 +414,8 @@ class RealTimeFragment : Fragment() {
         tvTreeCard1_image = mutableListOf()
         tvTreeCard1_compass = mutableListOf()
 
+        tvTreeCard1_cardView = mutableListOf()
+
         for (i in 0 until 5) {
             tvTreeCard1_dist.add(list_treeCard_views[i].findViewById(R.id.textView4))
             tvTreeCard1_bear.add(list_treeCard_views[i].findViewById(R.id.textView5))
@@ -418,7 +426,16 @@ class RealTimeFragment : Fragment() {
             tvTreeCard1_image.add(list_treeCard_views[i].findViewById(R.id.imageView1))
             tvTreeCard1_compass.add(list_treeCard_views[i].findViewById(R.id.imageView2))
 
+            tvTreeCard1_cardView.add(list_treeCard_views[i].findViewById<CardView>(R.id.card_view))
+
+            list_treeCard_views[i].findViewById<CardView>(R.id.card_view).setOnClickListener{
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(51.220328, -0.341247), 15f))
+            }
+
         }
+
+
+
 
 
         val species_options = arrayOf("All species", "Alder", "Ash", "Beech", "Birch", "Cedar of Lebanon", "Common ash", "Common beech", "Common hawthorn", "Common horse chestnut", "Common juniper", "Common lime", "Common sycamore", "Common yew", "Crack willow", "Douglas fir", "Downy birch", "Field maple", "Giant sequoia", "Hawthorn", "Hazel", "Holly", "Hornbeam", "Lime", "London plane", "Oak", "Pedunculate oak", "Rowan", "Scots pine", "Sessile oak", "Silver birch", "Small leaved lime", "Sweet chestnut", "Turkey oak", "Wild apple", "Wild black poplar", "Wild cherry", "Willow", "Yew")
@@ -494,6 +511,7 @@ class RealTimeFragment : Fragment() {
                             val TNSI: String, val heritageTree: String, val TotY: String, val championTree: String,
                            val treeID: String
                            )
+
 
 
 
@@ -594,16 +612,16 @@ class RealTimeFragment : Fragment() {
     {
         if (location.longitude != null && location.latitude != null && location.altitude != null) {
 
-//            val current_latitude = location.latitude.toDouble()
-//            val current_longitude = location.longitude.toDouble()
+            val current_latitude = location.latitude.toDouble()
+            val current_longitude = location.longitude.toDouble()
 
-//            // HOME FARM
+//             HOME FARM
 //            val current_latitude = 51.220328
 //            val current_longitude = -0.341247
 
-            // HOME FARM
-            val current_latitude = 53.280571
-            val current_longitude = -1.634341
+//            // Froggatt
+//            val current_latitude = 53.280571
+//            val current_longitude = -1.634341
 
 
             clearGoogleMapsMarkers()
@@ -617,6 +635,28 @@ class RealTimeFragment : Fragment() {
             val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
 
             val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 5)
+
+            var updateMap = false
+            for (i in 0 until 5) {
+                try{
+                    if (closestLocations[i].treeID != current_closest_gpsLocations[i].treeID){
+                        updateMap = true
+                    }
+                }
+                catch (e: Exception) {
+                    updateMap = true
+                }
+
+                try{
+                    current_closest_gpsLocations[i] = closestLocations[i]
+                }
+                catch (e: Exception) {
+                    current_closest_gpsLocations.add(closestLocations[i])
+                }
+            }
+
+
+
 
             var location1 = Location("provider")
             location1.latitude = current_latitude
@@ -636,7 +676,9 @@ class RealTimeFragment : Fragment() {
                 pos = LatLng(closestLocations[i].latitude, closestLocations[i].longitude)
                 builder.include(pos)
 
-                updateMapWithTreeLocation(location2.latitude, location2.longitude)
+                if(updateMap) {
+                    updateMapWithTreeLocation(location2.latitude, location2.longitude)
+                }
 
                 android.location.Location.distanceBetween(
                     current_latitude,
@@ -716,12 +758,15 @@ class RealTimeFragment : Fragment() {
 
             updateMapWithLocation( current_latitude, current_longitude)
 
-            val bounds = builder.build()
-            val padding = 150 // Adjust the padding as needed
-            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
-            mapView.getMapAsync { googleMap ->
-                googleMap.animateCamera(cameraUpdate)
+            if(updateMap){
+                val bounds = builder.build()
+                val padding = 150 // Adjust the padding as needed
+                val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+                mapView.getMapAsync { googleMap ->
+                    googleMap.animateCamera(cameraUpdate)
+                }
             }
+
 
 
 
