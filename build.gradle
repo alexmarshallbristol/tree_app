@@ -2,11 +2,13 @@
 buildscript {
     ext.kotlin_version = "1.6.10"
     ext.nav_version = '2.4.2'
+
     repositories {
         google()
     }
     dependencies {
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+//        implementation "com.google.android.gms:play-services-maps:17.0.1"
     }
 }
 

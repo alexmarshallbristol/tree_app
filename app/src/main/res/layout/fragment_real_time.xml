@@ -17,6 +17,11 @@
         tools:context=".RealTimeFragment"
         android:orientation="vertical">
 
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="350dp" />
+
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="match_parent"

@@ -39,6 +39,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 import android.widget.AdapterView
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+
+
+
+
 class RealTimeFragment : Fragment() {
     /**
      * TextView showing Longitude. We are keeping this as variable in order to prevent to ask the UI for this textView
@@ -74,17 +80,7 @@ class RealTimeFragment : Fragment() {
     private lateinit var selectedOption : String
     private lateinit var selectedOption_award : String
 
-//    private lateinit var tvTreeCard2_dist : TextView
-//    private lateinit var tvTreeCard2_bear : TextView
-//    private lateinit var tvTreeCard2_spec : TextView
-//    private lateinit var tvTreeCard2_link : TextView
-//    private lateinit var tvTreeCard2_image : ImageView
-//
-//    private lateinit var tvTreeCard3_dist : TextView
-//    private lateinit var tvTreeCard3_bear : TextView
-//    private lateinit var tvTreeCard3_spec : TextView
-//    private lateinit var tvTreeCard3_link : TextView
-//    private lateinit var tvTreeCard3_image : ImageView
+    private lateinit var mapView: MapView
 
     /**
      * It tells if we should center the camera of the map every time a position is retrieved. If the user has moved the map, we want to keep
@@ -281,6 +277,12 @@ class RealTimeFragment : Fragment() {
                               savedInstanceState : Bundle?): View?{
         //Inflating layout from the resources
         val view = inflater.inflate(R.layout.fragment_real_time, container,false)
+
+
+
+        mapView = view.findViewById(R.id.map_view)
+        mapView.onCreate(savedInstanceState)
+
 
 //        //Requires the map asynchronously (operation done in the main thread)
 //        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -515,13 +517,15 @@ class RealTimeFragment : Fragment() {
 //            tvAlt.text = String.format("%.7f", location.altitude.toDouble())
 
 
-//            val current_latitude = location.latitude.toDouble()
-//            val current_longitude = location.longitude.toDouble()
+            val current_latitude = location.latitude.toDouble()
+            val current_longitude = location.longitude.toDouble()
 //            val current_latitude = 51.3781
 //            val current_longitude = -2.3597
-                val current_latitude = 51.4545
-                val current_longitude = -2.5879
+//                val current_latitude = 51.4545
+//                val current_longitude = -2.5879
 
+//            GOOGLE MAPS API KEY
+//              AIzaSyBbngN_VCGUbLyOBYpn1FepIDJYCsmr-GA
 
             val referenceLocation = GPSLocation(current_latitude, current_longitude, "None", "None", "None",
                 "None","None","None","None","None","None") // Example reference location (San Francisco)
