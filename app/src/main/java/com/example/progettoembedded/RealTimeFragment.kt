@@ -212,6 +212,13 @@ class RealTimeFragment : Fragment() {
             }
         }
 
+        googleMap.setOnMapClickListener { latLng ->
+            // Create a marker at the clicked location
+            val markerOptions = MarkerOptions().position(latLng).title("Clicked Location")
+            googleMap.addMarker(markerOptions)
+        }
+
+
         //insert the marker in the current position
         insertMarker()
 
@@ -279,6 +286,12 @@ class RealTimeFragment : Fragment() {
         mapView.onPause()
     }
 
+    private fun clearGoogleMapsMarkers(){
+        mapView.getMapAsync { googleMap ->
+            googleMap.clear() // Clear previous markers if any
+        }
+    }
+
     private fun updateMapWithLocation(latitude: Double, longitude: Double) {
         val currentLocation = LatLng(latitude, longitude)
 
@@ -289,9 +302,9 @@ class RealTimeFragment : Fragment() {
         val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
 
         mapView.getMapAsync { googleMap ->
-            googleMap.clear() // Clear previous markers if any
-            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title("My Location"))
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+//            googleMap.clear() // Clear previous markers if any
+            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title("My Location").zIndex(9f))
+//            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
         }
     }
 
@@ -580,27 +593,23 @@ class RealTimeFragment : Fragment() {
     private fun updateCards(location : LocationDetails)
     {
         if (location.longitude != null && location.latitude != null && location.altitude != null) {
-            //Keeping always 7 decimal digits. Without this conversion a number such as 7.2, would be printed as 7.2 instead of
-                //7.2000000 (better to show the same number of digits for every number, it is also nicer to see by the user themselves)
-//            tvLong.text = String.format("%.7f", location.longitude.toDouble())
-//            tvLat.text = String.format("%.7f", location.latitude.toDouble())
-//            tvAlt.text = String.format("%.7f", location.altitude.toDouble())
+
+//            val current_latitude = location.latitude.toDouble()
+//            val current_longitude = location.longitude.toDouble()
+
+//            // HOME FARM
+//            val current_latitude = 51.220328
+//            val current_longitude = -0.341247
+
+            // HOME FARM
+            val current_latitude = 53.280571
+            val current_longitude = -1.634341
 
 
-            val current_latitude = location.latitude.toDouble()
-            val current_longitude = location.longitude.toDouble()
+            clearGoogleMapsMarkers()
+
 
             val builder = LatLngBounds.Builder()
-
-            updateMapWithLocation( current_latitude, current_longitude)
-
-//            val current_latitude = 51.3781
-//            val current_longitude = -2.3597
-//                val current_latitude = 51.4545
-//                val current_longitude = -2.5879
-
-//            GOOGLE MAPS API KEY
-//              AIzaSyBbngN_VCGUbLyOBYpn1FepIDJYCsmr-GA
 
             val referenceLocation = GPSLocation(current_latitude, current_longitude, "None", "None", "None",
                 "None","None","None","None","None","None") // Example reference location (San Francisco)
@@ -630,8 +639,8 @@ class RealTimeFragment : Fragment() {
                 updateMapWithTreeLocation(location2.latitude, location2.longitude)
 
                 android.location.Location.distanceBetween(
-                    location.latitude.toDouble(),
-                    location.longitude.toDouble(),
+                    current_latitude,
+                    current_longitude,
                     location2.latitude,
                     location2.longitude,
                     results
@@ -705,6 +714,7 @@ class RealTimeFragment : Fragment() {
 
 
 
+            updateMapWithLocation( current_latitude, current_longitude)
 
             val bounds = builder.build()
             val padding = 150 // Adjust the padding as needed
