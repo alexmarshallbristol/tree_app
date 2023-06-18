@@ -182,42 +182,42 @@ class RealTimeFragment : Fragment() {
         }
     }
 
-//    private val callback = OnMapReadyCallback { googleMap ->
-//
-//        /**
-//         * Manipulates the map once available.
-//         * This callback is triggered when the map is ready to be used.
-//         * This is where we can add markers or lines, add listeners or move the camera.
-//         * In this case, we just add a marker near Sydney, Australia.
-//         * If Google Play services is not installed on the device, the user will be prompted to
-//         * install it inside the SupportMapFragment. This method will only be triggered once the
-//         * user has installed Google Play services and returned to the app.
-//         */
-//
-//        map = googleMap
-//
-//        //Disabling zoom +/- controls at the bottom right-hand side of the screen
-//        map.uiSettings.isZoomControlsEnabled = false
-//        //The user cannot tilt the map
-//        map.uiSettings.isTiltGesturesEnabled = false
-//
-//        map.setOnCameraMoveStartedListener {
-//            //If the camera has been moved by the user with a gesture, we have to stop to recenter the map every time a new location
-//            //is available
-//            if (it == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-//                Log.d("moveCamera", "Camera moving")
-//                moveCamera = false
-//            }
-//        }
-//
-//        //insert the marker in the current position
-//        insertMarker()
-//
-//        //The map has been initialized
-//        initialized = true
-//
-//        updateUI()
-//    }
+    private val callback = OnMapReadyCallback { googleMap ->
+
+        /**
+         * Manipulates the map once available.
+         * This callback is triggered when the map is ready to be used.
+         * This is where we can add markers or lines, add listeners or move the camera.
+         * In this case, we just add a marker near Sydney, Australia.
+         * If Google Play services is not installed on the device, the user will be prompted to
+         * install it inside the SupportMapFragment. This method will only be triggered once the
+         * user has installed Google Play services and returned to the app.
+         */
+
+        map = googleMap
+
+        //Disabling zoom +/- controls at the bottom right-hand side of the screen
+        map.uiSettings.isZoomControlsEnabled = false
+        //The user cannot tilt the map
+        map.uiSettings.isTiltGesturesEnabled = false
+
+        map.setOnCameraMoveStartedListener {
+            //If the camera has been moved by the user with a gesture, we have to stop to recenter the map every time a new location
+            //is available
+            if (it == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                Log.d("moveCamera", "Camera moving")
+                moveCamera = false
+            }
+        }
+
+        //insert the marker in the current position
+        insertMarker()
+
+        //The map has been initialized
+        initialized = true
+
+        updateUI()
+    }
 
     /**
      * When the fragments is in the foreground and receives the input from the user we subscribe for updates from the service again and
@@ -282,7 +282,7 @@ class RealTimeFragment : Fragment() {
 
         mapView = view.findViewById(R.id.map_view)
         mapView.onCreate(savedInstanceState)
-
+        mapView.getMapAsync(callback)
 
 //        //Requires the map asynchronously (operation done in the main thread)
 //        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
