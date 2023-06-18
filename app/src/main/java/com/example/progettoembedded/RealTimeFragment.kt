@@ -676,9 +676,9 @@ class RealTimeFragment : Fragment() {
                 pos = LatLng(closestLocations[i].latitude, closestLocations[i].longitude)
                 builder.include(pos)
 
-                if(updateMap) {
-                    updateMapWithTreeLocation(location2.latitude, location2.longitude)
-                }
+
+                updateMapWithTreeLocation(location2.latitude, location2.longitude)
+
 
                 android.location.Location.distanceBetween(
                     current_latitude,
