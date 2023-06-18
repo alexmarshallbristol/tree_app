@@ -236,8 +236,20 @@ class RealTimeFragment : Fragment() {
 
         //We want to update the UI but move the camera to current position without any animation (animate set to false)
         updateUI()
+        mapView.onResume()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // Important: Call the MapView's onDestroy() method
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        // Important: Call the MapView's onLowMemory() method
+        mapView.onLowMemory()
+    }
     /**
      * Moves the camera to the last retrieved position in the readerService
      */
@@ -262,6 +274,7 @@ class RealTimeFragment : Fragment() {
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiverData)
         //remove pending broadcasts, they must not be handled when the receiver is restarted
         receiverData.abortBroadcast
+        mapView.onPause()
     }
 
 

@@ -59,7 +59,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:19.0.1"
 
     //Maps, non so se sia quello giusto
-    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
