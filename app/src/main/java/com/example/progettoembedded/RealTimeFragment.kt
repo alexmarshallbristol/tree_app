@@ -1,22 +1,24 @@
 package com.example.progettoembedded
 
-import android.R.attr.name
+//import com.google.android.gms.location.LocationServices
+//import com.google.android.gms.location.FusedLocationProviderClient
+//import com.google.android.gms.location.LocationCallback
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
-import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.text.Html
-import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -29,24 +31,19 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-import android.widget.AdapterView
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
-import android.widget.Button
-//import com.google.android.gms.location.LocationServices
-//import com.google.android.gms.location.FusedLocationProviderClient
-//import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.*
-import android.graphics.drawable.BitmapDrawable
 
 class RealTimeFragment : Fragment() {
     /**
@@ -309,7 +306,7 @@ class RealTimeFragment : Fragment() {
 
         mapView.getMapAsync { googleMap ->
             googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title("My Location"))
-        }   
+        }
     }
 
 
@@ -593,6 +590,8 @@ class RealTimeFragment : Fragment() {
             val current_latitude = location.latitude.toDouble()
             val current_longitude = location.longitude.toDouble()
 
+            val builder = LatLngBounds.Builder()
+
             updateMapWithLocation( current_latitude, current_longitude)
 
 //            val current_latitude = 51.3781
@@ -617,10 +616,16 @@ class RealTimeFragment : Fragment() {
             var location2 = Location("provider")
             var results = FloatArray(1)
 
+            var pos = LatLng(current_latitude, current_longitude)
+            builder.include(pos)
+
             for (i in 0 until 5) {
                 location2.latitude = closestLocations[i].latitude
                 location2.longitude = closestLocations[i].longitude
 
+
+                pos = LatLng(closestLocations[i].latitude, closestLocations[i].longitude)
+                builder.include(pos)
 
                 updateMapWithTreeLocation(location2.latitude, location2.longitude)
 
@@ -701,7 +706,12 @@ class RealTimeFragment : Fragment() {
 
 
 
-
+            val bounds = builder.build()
+            val padding = 150 // Adjust the padding as needed
+            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+            mapView.getMapAsync { googleMap ->
+                googleMap.animateCamera(cameraUpdate)
+            }
 
 
 
