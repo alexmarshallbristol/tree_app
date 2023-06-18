@@ -41,9 +41,12 @@ import kotlin.math.sqrt
 import android.widget.AdapterView
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-
-
-
+import android.widget.Button
+//import com.google.android.gms.location.LocationServices
+//import com.google.android.gms.location.FusedLocationProviderClient
+//import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.*
+import android.graphics.drawable.BitmapDrawable
 
 class RealTimeFragment : Fragment() {
     /**
@@ -81,6 +84,8 @@ class RealTimeFragment : Fragment() {
     private lateinit var selectedOption_award : String
 
     private lateinit var mapView: MapView
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
 
     /**
      * It tells if we should center the camera of the map every time a position is retrieved. If the user has moved the map, we want to keep
@@ -277,6 +282,37 @@ class RealTimeFragment : Fragment() {
         mapView.onPause()
     }
 
+    private fun updateMapWithLocation(latitude: Double, longitude: Double) {
+        val currentLocation = LatLng(latitude, longitude)
+
+        val height = 60 // resize according to your zooming level
+        val width = 60 // resize according to your zooming level
+        val bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+        val bitmap = bitmapDraw.bitmap
+        val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
+
+        mapView.getMapAsync { googleMap ->
+            googleMap.clear() // Clear previous markers if any
+            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title("My Location"))
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+        }
+    }
+
+    private fun updateMapWithTreeLocation(latitude: Double, longitude: Double) {
+        val currentLocation = LatLng(latitude, longitude)
+
+        val height = 150 // resize according to your zooming level
+        val width = 150 // resize according to your zooming level
+        val bitmapDraw = resources.getDrawable(R.drawable.tree) as BitmapDrawable
+        val bitmap = bitmapDraw.bitmap
+        val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
+
+        mapView.getMapAsync { googleMap ->
+            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title("My Location"))
+        }   
+    }
+
+
 
     /**
      * Creates the view the first time the fragment is created.
@@ -296,6 +332,30 @@ class RealTimeFragment : Fragment() {
         mapView = view.findViewById(R.id.map_view)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(callback)
+
+
+
+
+//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+//        val sample = model.readerService!!.currentSample
+//        updateMapWithLocation( sample.latitude!!.toDouble(), sample.longitude!!.toDouble())
+
+
+
+
+
+
+//        locationCallback = object : LocationCallback() {
+//                override fun onLocationResult(locationResult: LocationResult?) {
+//                locationResult ?: return
+//                for (location in locationResult.locations) {
+//                    // Update map with current location
+//                    updateMapWithLocation(location.latitude, location.longitude)
+//                }
+//            }
+//        }
+
 
 //        //Requires the map asynchronously (operation done in the main thread)
 //        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -532,6 +592,9 @@ class RealTimeFragment : Fragment() {
 
             val current_latitude = location.latitude.toDouble()
             val current_longitude = location.longitude.toDouble()
+
+            updateMapWithLocation( current_latitude, current_longitude)
+
 //            val current_latitude = 51.3781
 //            val current_longitude = -2.3597
 //                val current_latitude = 51.4545
@@ -557,6 +620,10 @@ class RealTimeFragment : Fragment() {
             for (i in 0 until 5) {
                 location2.latitude = closestLocations[i].latitude
                 location2.longitude = closestLocations[i].longitude
+
+
+                updateMapWithTreeLocation(location2.latitude, location2.longitude)
+
                 android.location.Location.distanceBetween(
                     location.latitude.toDouble(),
                     location.longitude.toDouble(),

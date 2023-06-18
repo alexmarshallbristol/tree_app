@@ -57,6 +57,7 @@ dependencies {
 
     //Location
     implementation "com.google.android.gms:play-services-location:19.0.1"
+//    implementation "com.google.android.gms:play-services:11.0.0"
 
     //Maps, non so se sia quello giusto
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
