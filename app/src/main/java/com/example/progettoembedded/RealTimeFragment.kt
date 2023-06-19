@@ -503,7 +503,12 @@ class RealTimeFragment : Fragment() {
                 selectedOption = species_options[position]
                 if(selectedOption!="All species") {
                     val sample = model.readerService!!.currentSample
-                    updateCards(sample)
+                    if(pause_updates){
+                        updateCards(sample,force_with_last_position=true)
+                    }
+                    else{
+                        updateCards(sample)
+                    }
                 }
             }
 
@@ -524,7 +529,12 @@ class RealTimeFragment : Fragment() {
                 selectedOption_award = awards_options[position]
                 if(selectedOption_award!="All trees") {
                     val sample = model.readerService!!.currentSample
-                    updateCards(sample)
+                    if(pause_updates){
+                        updateCards(sample,force_with_last_position=true)
+                    }
+                    else{
+                        updateCards(sample)
+                    }
                 }
             }
 
@@ -669,13 +679,25 @@ class RealTimeFragment : Fragment() {
      * @param location location details to update the cards with. If any of the 3 components is null, that means that it was impossible to retrieve
      * the location. Therefore, we show that No data is available.
      */
-    private fun updateCards(location : LocationDetails, pause: Boolean = false, red_label: Boolean = false)
+    private fun updateCards(location : LocationDetails, pause: Boolean = false, red_label: Boolean = false, force_with_last_position: Boolean = false)
     {
-        if ((location.longitude != null && location.latitude != null && location.altitude != null) && (pause_updates==false)) {
+        if(force_with_last_position) {
+            pause_updates = false
+        }
+        if ( ((location.longitude != null && location.latitude != null && location.altitude != null) && (pause_updates==false)) ) {
 
-            val current_latitude = location.latitude.toDouble()
-            val current_longitude = location.longitude.toDouble()
-            current_position = LatLng(current_latitude, current_longitude)
+            var current_latitude : Double = 0.0
+            var current_longitude : Double = 0.0
+            if(!force_with_last_position){
+                current_latitude = location.latitude.toDouble()
+                current_longitude = location.longitude.toDouble()
+                current_position = LatLng(current_latitude, current_longitude)
+            }
+            else{
+                current_latitude = current_position.latitude
+                current_longitude = current_position.longitude
+            }
+
 //             HOME FARM
 //            val current_latitude = 51.220328
 //            val current_longitude = -0.341247
@@ -870,6 +892,9 @@ class RealTimeFragment : Fragment() {
         }
 
         if(pause){
+            pause_updates=true
+        }
+        if(force_with_last_position) {
             pause_updates=true
         }
     }
