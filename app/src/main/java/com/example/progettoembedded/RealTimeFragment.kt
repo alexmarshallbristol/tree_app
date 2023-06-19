@@ -86,7 +86,7 @@ class RealTimeFragment : Fragment() {
 
     private var current_closest_gpsLocations = mutableListOf<GPSLocation>()
 
-
+    private var counter = 0
     private lateinit var selectedOption : String
     private lateinit var selectedOption_award : String
 
@@ -506,7 +506,7 @@ class RealTimeFragment : Fragment() {
                 if(selectedOption!="All species") {
                     val sample = model.readerService!!.currentSample
                     if(pause_updates){
-                        updateCards(sample,force_with_last_position=true)
+                        updateCards(sample,force_with_last_position=true, red_label = true)
                     }
                     else{
                         updateCards(sample)
@@ -532,7 +532,7 @@ class RealTimeFragment : Fragment() {
                 if(selectedOption_award!="All trees") {
                     val sample = model.readerService!!.currentSample
                     if(pause_updates){
-                        updateCards(sample,force_with_last_position=true)
+                        updateCards(sample,force_with_last_position=true, red_label = true)
                     }
                     else{
                         updateCards(sample)
@@ -604,8 +604,12 @@ class RealTimeFragment : Fragment() {
         return sortedLocations.subList(0, minOf(count, sortedLocations.size))
     }
 
-    private fun readGPSLocationsFromAssets(context: Context, fileName: String): List<GPSLocation> {
+    private fun readGPSLocationsFromAssets(context: Context, fileName: String, referenceLocation: GPSLocation): List<GPSLocation> {
         val gpsLocations = mutableListOf<GPSLocation>()
+
+//        counter = 0
+        val listOfDistances = MutableList(7) { index -> 1000000.0 }
+
 
         try {
             val inputStream = context.assets.open(fileName)
@@ -647,7 +651,21 @@ class RealTimeFragment : Fragment() {
                             localName, veteranStatus, publicAccessibilityStatus, TNSI,
                             heritageTree, TotY, championTree, treeID
                         )
-                        gpsLocations.add(gpsLocation)
+
+                        val distance = calculateDistance(referenceLocation, gpsLocation)
+                        val maxDistanceIndex = listOfDistances.indexOf(listOfDistances.maxOrNull())
+                        if (distance < listOfDistances[maxDistanceIndex]) {
+                            if (gpsLocations.size < 7){
+                                gpsLocations.add(gpsLocation)
+                            }
+                            else {
+                                gpsLocations[maxDistanceIndex] = gpsLocation
+                            }
+                            listOfDistances[maxDistanceIndex] = distance
+                        }
+
+//                        gpsLocations.add(gpsLocation)
+//                        counter++
                     }
                 }
 
@@ -708,6 +726,9 @@ class RealTimeFragment : Fragment() {
 //            val current_latitude = 53.280571
 //            val current_longitude = -1.634341
 
+             current_latitude = 51.460597
+             current_longitude = -2.636258
+
 
             clearGoogleMapsMarkers()
 
@@ -717,7 +738,7 @@ class RealTimeFragment : Fragment() {
             val referenceLocation = GPSLocation(current_latitude, current_longitude, "None", "None", "None",
                 "None","None","None","None","None","None") // Example reference location (San Francisco)
             val fileName = "trees.txt"
-            val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
+            val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName, referenceLocation)
 
             val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 7)
 
@@ -816,11 +837,15 @@ class RealTimeFragment : Fragment() {
                     updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f meters", dist), alpha=.75f)
                 }
 
+
                 tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing.toDouble()))
                 tvTreeCard1_spec[i].text = Html.fromHtml("<b>Species: " + String.format("</b>%s", tree_species))
 
 
-                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", closestLocations[i].localName))
+//                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", closestLocations[i].localName))
+//                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", counter))
+                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", "${gpsLocations.size}"))
+
 
                 tvTreeCard1_public[i].text = Html.fromHtml("<b>Access: " + String.format("</b>%s", closestLocations[i].publicAccessibilityStatus))
 
