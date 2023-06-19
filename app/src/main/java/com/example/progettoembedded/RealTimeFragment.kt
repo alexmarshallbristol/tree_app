@@ -47,6 +47,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import android.widget.Button
 import com.google.android.gms.maps.CameraUpdate
+import java.util.*
 
 class RealTimeFragment : Fragment() {
     /**
@@ -100,6 +101,7 @@ class RealTimeFragment : Fragment() {
      * the settings made to the map by the user themselves instead of re-centering
      */
     private var moveCamera = true
+    private var pause_updates = false
 
     /**
      * Reference to the map shown on the screen
@@ -227,6 +229,8 @@ class RealTimeFragment : Fragment() {
             // Create a marker at the clicked location
             val markerOptions = MarkerOptions().position(latLng).title("Clicked Location")
             googleMap.addMarker(markerOptions)
+            val loc = LocationDetails(latLng.longitude.toString(), latLng.latitude.toString(), "0.", Date(System.currentTimeMillis()))
+            updateCards(loc, pause=true, red_label=true)
         }
 
 
@@ -303,12 +307,18 @@ class RealTimeFragment : Fragment() {
         }
     }
 
-    private fun updateMapWithLocation(latitude: Double, longitude: Double) {
+    private fun updateMapWithLocation(latitude: Double, longitude: Double, red_label: Boolean = false) {
         val currentLocation = LatLng(latitude, longitude)
 
         val height = 60 // resize according to your zooming level
         val width = 60 // resize according to your zooming level
-        val bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+        var bitmapDraw: BitmapDrawable
+        if(red_label){
+            bitmapDraw = resources.getDrawable(R.drawable.red_dot) as BitmapDrawable
+        }
+        else{
+            bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+        }
         val bitmap = bitmapDraw.bitmap
         val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
 
@@ -366,6 +376,15 @@ class RealTimeFragment : Fragment() {
             catch(e: Exception){}
 
         }
+
+        val reset_button: Button = view.findViewById(R.id.reset_button)
+        reset_button.setOnClickListener {
+            try{
+                pause_updates = false
+            }
+            catch(e: Exception){}
+        }
+
 
 
 
@@ -636,9 +655,9 @@ class RealTimeFragment : Fragment() {
      * @param location location details to update the cards with. If any of the 3 components is null, that means that it was impossible to retrieve
      * the location. Therefore, we show that No data is available.
      */
-    private fun updateCards(location : LocationDetails)
+    private fun updateCards(location : LocationDetails, pause: Boolean = false, red_label: Boolean = false)
     {
-        if (location.longitude != null && location.latitude != null && location.altitude != null) {
+        if ((location.longitude != null && location.latitude != null && location.altitude != null) && (pause_updates==false)) {
 
             val current_latitude = location.latitude.toDouble()
             val current_longitude = location.longitude.toDouble()
@@ -699,14 +718,14 @@ class RealTimeFragment : Fragment() {
             builder.include(pos)
 
 
-            val closestLocations_100 = findClosestLocations(referenceLocation, gpsLocations, 100)
-            for (i in 5 until 100) {
-                location2.latitude = closestLocations_100[i].latitude
-                location2.longitude = closestLocations_100[i].longitude
-                val factor = ((95.0-(i-5.0))/95.0)
-                val alpha_i = 0.15f*factor.toFloat()
-                updateMapWithTreeLocation(location2.latitude, location2.longitude, alpha=alpha_i.toFloat())
-            }
+//            val closestLocations_100 = findClosestLocations(referenceLocation, gpsLocations, 100)
+//            for (i in 5 until 100) {
+//                location2.latitude = closestLocations_100[i].latitude
+//                location2.longitude = closestLocations_100[i].longitude
+//                val factor = ((95.0-(i-5.0))/95.0)
+//                val alpha_i = 0.15f*factor.toFloat()
+//                updateMapWithTreeLocation(location2.latitude, location2.longitude, alpha=alpha_i.toFloat())
+//            }
 
             for (i in 0 until 5) {
                 location2.latitude = closestLocations[i].latitude
@@ -797,7 +816,7 @@ class RealTimeFragment : Fragment() {
 
 
 
-            updateMapWithLocation( current_latitude, current_longitude)
+            updateMapWithLocation( current_latitude, current_longitude, red_label=red_label)
 
             if(updateMap){
                 val bounds = builder.build()
@@ -834,6 +853,10 @@ class RealTimeFragment : Fragment() {
 //            tvTreeCard3_spec.text = resources.getString(R.string.label_nodata)
 
             Log.d("Second", "No data")
+        }
+
+        if(pause){
+            pause_updates=true
         }
     }
 }
