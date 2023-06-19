@@ -100,8 +100,6 @@
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toBottomOf="@id/tree_card3" />
 
-
-
         <include
             android:id="@+id/tree_card5"
             layout="@layout/tree_card"
@@ -110,7 +108,23 @@
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toBottomOf="@id/tree_card4" />
 
+        <include
+            android:id="@+id/tree_card6"
+            layout="@layout/tree_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/tree_card5" />
 
-        </LinearLayout>
+        <include
+            android:id="@+id/tree_card7"
+            layout="@layout/tree_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/tree_card6" />
+
+
+    </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

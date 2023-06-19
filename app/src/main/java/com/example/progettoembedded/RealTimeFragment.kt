@@ -387,6 +387,7 @@ class RealTimeFragment : Fragment() {
                 pause_updates = false
                 val sample = model.readerService!!.currentSample
                 updateCards(sample)
+                map.animateCamera(current_CameraUpdate)
             }
             catch(e: Exception){}
         }
@@ -446,7 +447,8 @@ class RealTimeFragment : Fragment() {
 
         val list_treeCard_views : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card1),
             view.findViewById(R.id.tree_card2), view.findViewById(R.id.tree_card3),
-            view.findViewById(R.id.tree_card4), view.findViewById(R.id.tree_card5))
+            view.findViewById(R.id.tree_card4), view.findViewById(R.id.tree_card5), view.findViewById(R.id.tree_card6),
+            view.findViewById(R.id.tree_card7))
         tvTreeCard1_dist = mutableListOf()
         tvTreeCard1_bear = mutableListOf()
         tvTreeCard1_spec = mutableListOf()
@@ -459,7 +461,7 @@ class RealTimeFragment : Fragment() {
 //        tvTreeCard1_cardView = mutableListOf()
         tvTreeCard1_viewButton = mutableListOf()
 
-        for (i in 0 until 5) {
+        for (i in 0 until 7) {
             tvTreeCard1_dist.add(list_treeCard_views[i].findViewById(R.id.textView4))
             tvTreeCard1_bear.add(list_treeCard_views[i].findViewById(R.id.textView5))
             tvTreeCard1_spec.add(list_treeCard_views[i].findViewById(R.id.textView6))
@@ -717,12 +719,12 @@ class RealTimeFragment : Fragment() {
             val fileName = "trees.txt"
             val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
 
-            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 5)
+            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 7)
 
 
 
             var updateMap = false
-            for (i in 0 until 5) {
+            for (i in 0 until 7) {
                 try{
                     if (closestLocations[i].treeID != current_closest_gpsLocations[i].treeID){
                         updateMap = true
@@ -763,7 +765,7 @@ class RealTimeFragment : Fragment() {
 //                updateMapWithTreeLocation(location2.latitude, location2.longitude, alpha=alpha_i.toFloat())
 //            }
 
-            for (i in 0 until 5) {
+            for (i in 0 until 7) {
                 location2.latitude = closestLocations[i].latitude
                 location2.longitude = closestLocations[i].longitude
 
@@ -807,11 +809,11 @@ class RealTimeFragment : Fragment() {
                 if (dist > 1000) {
                     val new_dist = dist / 1000
                     tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f km", new_dist))
-                    updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f km", new_dist))
+                    updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f km", new_dist), alpha=.75f)
 
                 } else {
                     tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f meters", dist))
-                    updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f meters", dist))
+                    updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f meters", dist), alpha=.75f)
                 }
 
                 tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing.toDouble()))
