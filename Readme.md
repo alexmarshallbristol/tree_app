@@ -4,12 +4,9 @@
 
 TO DO
 
-* Get all trees into database
-<!-- * drop down box to filter based on trees awards (verteran status/special status) -->
-* button to turn on only trees that have won awards
-* filter by species
-* click through to info page for trees?
 * colour code species?
 * remove any duplicates
-* Google maps link to GPS
-* add map (hard)
+* if user clicks on map, do nearest trees calculation from that point - add reset button
+* update timing of reset and map items (eg pins) - if computing at a new point turn off updates until reset
+* change to N trees
+* add all trees in the background?

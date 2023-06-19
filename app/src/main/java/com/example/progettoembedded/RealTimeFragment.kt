@@ -319,7 +319,7 @@ class RealTimeFragment : Fragment() {
         }
     }
 
-    private fun updateMapWithTreeLocation(latitude: Double, longitude: Double, species: String) {
+    private fun updateMapWithTreeLocation(latitude: Double, longitude: Double, species: String = "", alpha: Float = 1f) {
         val currentLocation = LatLng(latitude, longitude)
 
         val height = 150 // resize according to your zooming level
@@ -329,8 +329,11 @@ class RealTimeFragment : Fragment() {
         val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
 
         mapView.getMapAsync { googleMap ->
-            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(species))
+            val marker = googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(species).alpha(alpha))
         }
+
+
+
     }
 
 
@@ -661,6 +664,8 @@ class RealTimeFragment : Fragment() {
 
             val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 5)
 
+
+
             var updateMap = false
             for (i in 0 until 5) {
                 try{
@@ -692,6 +697,16 @@ class RealTimeFragment : Fragment() {
 
             var pos = LatLng(current_latitude, current_longitude)
             builder.include(pos)
+
+
+            val closestLocations_100 = findClosestLocations(referenceLocation, gpsLocations, 100)
+            for (i in 5 until 100) {
+                location2.latitude = closestLocations_100[i].latitude
+                location2.longitude = closestLocations_100[i].longitude
+                val factor = ((95.0-(i-5.0))/95.0)
+                val alpha_i = 0.15f*factor.toFloat()
+                updateMapWithTreeLocation(location2.latitude, location2.longitude, alpha=alpha_i.toFloat())
+            }
 
             for (i in 0 until 5) {
                 location2.latitude = closestLocations[i].latitude
