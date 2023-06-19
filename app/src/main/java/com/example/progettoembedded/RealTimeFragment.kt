@@ -314,18 +314,21 @@ class RealTimeFragment : Fragment() {
         val height = 60 // resize according to your zooming level
         val width = 60 // resize according to your zooming level
         var bitmapDraw: BitmapDrawable
+        var loc_string: String
         if(red_label){
             bitmapDraw = resources.getDrawable(R.drawable.red_dot) as BitmapDrawable
+            loc_string = "Pinned Location"
         }
         else{
             bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+            loc_string = "My Location"
         }
         val bitmap = bitmapDraw.bitmap
         val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
 
         mapView.getMapAsync { googleMap ->
 //            googleMap.clear() // Clear previous markers if any
-            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title("My Location").zIndex(9f))
+            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(loc_string).zIndex(9f))
 //            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
         }
     }
@@ -779,14 +782,14 @@ class RealTimeFragment : Fragment() {
 
                 val tree_species = closestLocations[i].species
 
-                updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species)
-
                 if (dist > 1000) {
                     val new_dist = dist / 1000
                     tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f km", new_dist))
+                    updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f km", new_dist))
+
                 } else {
                     tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f meters", dist))
-
+                    updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f meters", dist))
                 }
 
                 tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing.toDouble()))
