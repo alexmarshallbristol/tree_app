@@ -382,6 +382,8 @@ class RealTimeFragment : Fragment() {
         reset_button.setOnClickListener {
             try{
                 pause_updates = false
+                val sample = model.readerService!!.currentSample
+                updateCards(sample)
             }
             catch(e: Exception){}
         }
@@ -496,6 +498,10 @@ class RealTimeFragment : Fragment() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedOption = species_options[position]
+                if(selectedOption!="All species") {
+                    val sample = model.readerService!!.currentSample
+                    updateCards(sample)
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -513,6 +519,10 @@ class RealTimeFragment : Fragment() {
         spinner_awards.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedOption_award = awards_options[position]
+                if(selectedOption_award!="All trees") {
+                    val sample = model.readerService!!.currentSample
+                    updateCards(sample)
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
