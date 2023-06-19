@@ -47,6 +47,8 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import android.widget.Button
 import com.google.android.gms.maps.CameraUpdate
+import java.util.*
+import java.io.File
 
 class RealTimeFragment : Fragment() {
     /**
@@ -85,7 +87,7 @@ class RealTimeFragment : Fragment() {
 
     private var current_closest_gpsLocations = mutableListOf<GPSLocation>()
 
-
+    private var counter = 0
     private lateinit var selectedOption : String
     private lateinit var selectedOption_award : String
 
@@ -100,6 +102,7 @@ class RealTimeFragment : Fragment() {
      * the settings made to the map by the user themselves instead of re-centering
      */
     private var moveCamera = true
+    private var pause_updates = false
 
     /**
      * Reference to the map shown on the screen
@@ -227,6 +230,9 @@ class RealTimeFragment : Fragment() {
             // Create a marker at the clicked location
             val markerOptions = MarkerOptions().position(latLng).title("Clicked Location")
             googleMap.addMarker(markerOptions)
+            val loc = LocationDetails(latLng.longitude.toString(), latLng.latitude.toString(), "0.", Date(System.currentTimeMillis()))
+            pause_updates = false
+            updateCards(loc, pause=true, red_label=true)
         }
 
 
@@ -303,18 +309,27 @@ class RealTimeFragment : Fragment() {
         }
     }
 
-    private fun updateMapWithLocation(latitude: Double, longitude: Double) {
+    private fun updateMapWithLocation(latitude: Double, longitude: Double, red_label: Boolean = false) {
         val currentLocation = LatLng(latitude, longitude)
 
         val height = 60 // resize according to your zooming level
         val width = 60 // resize according to your zooming level
-        val bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+        var bitmapDraw: BitmapDrawable
+        var loc_string: String
+        if(red_label){
+            bitmapDraw = resources.getDrawable(R.drawable.red_dot) as BitmapDrawable
+            loc_string = "Pinned Location"
+        }
+        else{
+            bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+            loc_string = "My Location"
+        }
         val bitmap = bitmapDraw.bitmap
         val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
 
         mapView.getMapAsync { googleMap ->
 //            googleMap.clear() // Clear previous markers if any
-            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title("My Location").zIndex(9f))
+            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(loc_string).zIndex(9f))
 //            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
         }
     }
@@ -366,6 +381,18 @@ class RealTimeFragment : Fragment() {
             catch(e: Exception){}
 
         }
+
+        val reset_button: Button = view.findViewById(R.id.reset_button)
+        reset_button.setOnClickListener {
+            try{
+                pause_updates = false
+                val sample = model.readerService!!.currentSample
+                updateCards(sample)
+                map.animateCamera(current_CameraUpdate)
+            }
+            catch(e: Exception){}
+        }
+
 
 
 
@@ -421,7 +448,8 @@ class RealTimeFragment : Fragment() {
 
         val list_treeCard_views : List<FrameLayout> = listOf(view.findViewById(R.id.tree_card1),
             view.findViewById(R.id.tree_card2), view.findViewById(R.id.tree_card3),
-            view.findViewById(R.id.tree_card4), view.findViewById(R.id.tree_card5))
+            view.findViewById(R.id.tree_card4), view.findViewById(R.id.tree_card5), view.findViewById(R.id.tree_card6),
+            view.findViewById(R.id.tree_card7))
         tvTreeCard1_dist = mutableListOf()
         tvTreeCard1_bear = mutableListOf()
         tvTreeCard1_spec = mutableListOf()
@@ -434,7 +462,7 @@ class RealTimeFragment : Fragment() {
 //        tvTreeCard1_cardView = mutableListOf()
         tvTreeCard1_viewButton = mutableListOf()
 
-        for (i in 0 until 5) {
+        for (i in 0 until 7) {
             tvTreeCard1_dist.add(list_treeCard_views[i].findViewById(R.id.textView4))
             tvTreeCard1_bear.add(list_treeCard_views[i].findViewById(R.id.textView5))
             tvTreeCard1_spec.add(list_treeCard_views[i].findViewById(R.id.textView6))
@@ -476,6 +504,15 @@ class RealTimeFragment : Fragment() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedOption = species_options[position]
+                if(selectedOption!="All species") {
+                    val sample = model.readerService!!.currentSample
+                    if(pause_updates){
+                        updateCards(sample,force_with_last_position=true, red_label = true)
+                    }
+                    else{
+                        updateCards(sample)
+                    }
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -493,6 +530,15 @@ class RealTimeFragment : Fragment() {
         spinner_awards.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedOption_award = awards_options[position]
+                if(selectedOption_award!="All trees") {
+                    val sample = model.readerService!!.currentSample
+                    if(pause_updates){
+                        updateCards(sample,force_with_last_position=true, red_label = true)
+                    }
+                    else{
+                        updateCards(sample)
+                    }
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -559,10 +605,14 @@ class RealTimeFragment : Fragment() {
         return sortedLocations.subList(0, minOf(count, sortedLocations.size))
     }
 
-    private fun readGPSLocationsFromAssets(context: Context, fileName: String): List<GPSLocation> {
+    private fun readGPSLocationsFromAssets(context: Context, fileName: String, referenceLocation: GPSLocation): List<GPSLocation> {
         val gpsLocations = mutableListOf<GPSLocation>()
 
+//        counter = 0
+        val listOfDistances = MutableList(7) { index -> 1000000.0 }
+
         try {
+
             val inputStream = context.assets.open(fileName)
             val size = inputStream.available()
             val buffer = ByteArray(size)
@@ -602,7 +652,21 @@ class RealTimeFragment : Fragment() {
                             localName, veteranStatus, publicAccessibilityStatus, TNSI,
                             heritageTree, TotY, championTree, treeID
                         )
-                        gpsLocations.add(gpsLocation)
+
+                        val distance = calculateDistance(referenceLocation, gpsLocation)
+                        val maxDistanceIndex = listOfDistances.indexOf(listOfDistances.maxOrNull())
+                        if (distance < listOfDistances[maxDistanceIndex]) {
+                            if (gpsLocations.size < 7){
+                                gpsLocations.add(gpsLocation)
+                            }
+                            else {
+                                gpsLocations[maxDistanceIndex] = gpsLocation
+                            }
+                            listOfDistances[maxDistanceIndex] = distance
+                        }
+
+//                        gpsLocations.add(gpsLocation)
+//                        counter++
                     }
                 }
 
@@ -636,13 +700,25 @@ class RealTimeFragment : Fragment() {
      * @param location location details to update the cards with. If any of the 3 components is null, that means that it was impossible to retrieve
      * the location. Therefore, we show that No data is available.
      */
-    private fun updateCards(location : LocationDetails)
+    private fun updateCards(location : LocationDetails, pause: Boolean = false, red_label: Boolean = false, force_with_last_position: Boolean = false)
     {
-        if (location.longitude != null && location.latitude != null && location.altitude != null) {
+        if(force_with_last_position) {
+            pause_updates = false
+        }
+        if ( ((location.longitude != null && location.latitude != null && location.altitude != null) && (pause_updates==false)) ) {
 
-            val current_latitude = location.latitude.toDouble()
-            val current_longitude = location.longitude.toDouble()
-            current_position = LatLng(current_latitude, current_longitude)
+            var current_latitude : Double = 0.0
+            var current_longitude : Double = 0.0
+            if(!force_with_last_position){
+                current_latitude = location.latitude.toDouble()
+                current_longitude = location.longitude.toDouble()
+                current_position = LatLng(current_latitude, current_longitude)
+            }
+            else{
+                current_latitude = current_position.latitude
+                current_longitude = current_position.longitude
+            }
+
 //             HOME FARM
 //            val current_latitude = 51.220328
 //            val current_longitude = -0.341247
@@ -650,6 +726,9 @@ class RealTimeFragment : Fragment() {
 //            // Froggatt
 //            val current_latitude = 53.280571
 //            val current_longitude = -1.634341
+
+             current_latitude = 51.460597
+             current_longitude = -2.636258
 
 
             clearGoogleMapsMarkers()
@@ -660,14 +739,14 @@ class RealTimeFragment : Fragment() {
             val referenceLocation = GPSLocation(current_latitude, current_longitude, "None", "None", "None",
                 "None","None","None","None","None","None") // Example reference location (San Francisco)
             val fileName = "trees.txt"
-            val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName)
+            val gpsLocations = readGPSLocationsFromAssets(requireContext(), fileName, referenceLocation)
 
-            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 5)
+            val closestLocations = findClosestLocations(referenceLocation, gpsLocations, 7)
 
 
 
             var updateMap = false
-            for (i in 0 until 5) {
+            for (i in 0 until 7) {
                 try{
                     if (closestLocations[i].treeID != current_closest_gpsLocations[i].treeID){
                         updateMap = true
@@ -699,16 +778,16 @@ class RealTimeFragment : Fragment() {
             builder.include(pos)
 
 
-            val closestLocations_100 = findClosestLocations(referenceLocation, gpsLocations, 100)
-            for (i in 5 until 100) {
-                location2.latitude = closestLocations_100[i].latitude
-                location2.longitude = closestLocations_100[i].longitude
-                val factor = ((95.0-(i-5.0))/95.0)
-                val alpha_i = 0.15f*factor.toFloat()
-                updateMapWithTreeLocation(location2.latitude, location2.longitude, alpha=alpha_i.toFloat())
-            }
+//            val closestLocations_100 = findClosestLocations(referenceLocation, gpsLocations, 100)
+//            for (i in 5 until 100) {
+//                location2.latitude = closestLocations_100[i].latitude
+//                location2.longitude = closestLocations_100[i].longitude
+//                val factor = ((95.0-(i-5.0))/95.0)
+//                val alpha_i = 0.15f*factor.toFloat()
+//                updateMapWithTreeLocation(location2.latitude, location2.longitude, alpha=alpha_i.toFloat())
+//            }
 
-            for (i in 0 until 5) {
+            for (i in 0 until 7) {
                 location2.latitude = closestLocations[i].latitude
                 location2.longitude = closestLocations[i].longitude
 
@@ -749,21 +828,25 @@ class RealTimeFragment : Fragment() {
 
                 val tree_species = closestLocations[i].species
 
-                updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species)
-
                 if (dist > 1000) {
                     val new_dist = dist / 1000
                     tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f km", new_dist))
+                    updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f km", new_dist), alpha=.75f)
+
                 } else {
                     tvTreeCard1_dist[i].text = Html.fromHtml("<b>Distance: " + String.format("</b>%.1f meters", dist))
-
+                    updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species+" - " + String.format("%.1f meters", dist), alpha=.75f)
                 }
+
 
                 tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing.toDouble()))
                 tvTreeCard1_spec[i].text = Html.fromHtml("<b>Species: " + String.format("</b>%s", tree_species))
 
 
-                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", closestLocations[i].localName))
+//                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", closestLocations[i].localName))
+//                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", counter))
+                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", "${gpsLocations.size}"))
+
 
                 tvTreeCard1_public[i].text = Html.fromHtml("<b>Access: " + String.format("</b>%s", closestLocations[i].publicAccessibilityStatus))
 
@@ -797,7 +880,7 @@ class RealTimeFragment : Fragment() {
 
 
 
-            updateMapWithLocation( current_latitude, current_longitude)
+            updateMapWithLocation( current_latitude, current_longitude, red_label=red_label)
 
             if(updateMap){
                 val bounds = builder.build()
@@ -834,6 +917,13 @@ class RealTimeFragment : Fragment() {
 //            tvTreeCard3_spec.text = resources.getString(R.string.label_nodata)
 
             Log.d("Second", "No data")
+        }
+
+        if(pause){
+            pause_updates=true
+        }
+        if(force_with_last_position) {
+            pause_updates=true
         }
     }
 }
