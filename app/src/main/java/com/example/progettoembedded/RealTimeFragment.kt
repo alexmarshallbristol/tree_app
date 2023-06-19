@@ -88,8 +88,8 @@ class RealTimeFragment : Fragment() {
     private var current_closest_gpsLocations = mutableListOf<GPSLocation>()
 
     private var counter = 0
-    private lateinit var selectedOption : String
-    private lateinit var selectedOption_award : String
+    private var selectedOption : String = "All species"
+    private var selectedOption_award : String = "All trees"
 
     private lateinit var mapView: MapView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -503,8 +503,9 @@ class RealTimeFragment : Fragment() {
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                var selectedOption_past = selectedOption
                 selectedOption = species_options[position]
-                if(selectedOption!="All species") {
+                if(selectedOption!="All species" || selectedOption_past!=selectedOption) {
                     val sample = model.readerService!!.currentSample
                     if(pause_updates){
                         updateCards(sample,force_with_last_position=true, red_label = true)
@@ -529,8 +530,9 @@ class RealTimeFragment : Fragment() {
 
         spinner_awards.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                var selectedOption_award_past = selectedOption_award
                 selectedOption_award = awards_options[position]
-                if(selectedOption_award!="All trees") {
+                if(selectedOption_award!="All trees" || selectedOption_award_past!=selectedOption_award) {
                     val sample = model.readerService!!.currentSample
                     if(pause_updates){
                         updateCards(sample,force_with_last_position=true, red_label = true)
