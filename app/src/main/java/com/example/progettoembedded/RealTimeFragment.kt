@@ -48,6 +48,7 @@ import kotlin.math.sqrt
 import android.widget.Button
 import com.google.android.gms.maps.CameraUpdate
 import java.util.*
+import java.io.File
 
 class RealTimeFragment : Fragment() {
     /**
@@ -610,8 +611,8 @@ class RealTimeFragment : Fragment() {
 //        counter = 0
         val listOfDistances = MutableList(7) { index -> 1000000.0 }
 
-
         try {
+
             val inputStream = context.assets.open(fileName)
             val size = inputStream.available()
             val buffer = ByteArray(size)
