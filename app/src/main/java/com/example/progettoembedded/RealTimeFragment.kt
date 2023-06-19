@@ -230,6 +230,7 @@ class RealTimeFragment : Fragment() {
             val markerOptions = MarkerOptions().position(latLng).title("Clicked Location")
             googleMap.addMarker(markerOptions)
             val loc = LocationDetails(latLng.longitude.toString(), latLng.latitude.toString(), "0.", Date(System.currentTimeMillis()))
+            pause_updates = false
             updateCards(loc, pause=true, red_label=true)
         }
 
