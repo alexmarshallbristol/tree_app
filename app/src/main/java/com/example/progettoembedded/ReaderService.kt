@@ -367,7 +367,7 @@ class ReaderService : Service() {
         private const val MINUTES = 5
 
         //How many seconds between a position retrieval and the following
-        const val SECONDS_INTERVAL = 5
+        const val SECONDS_INTERVAL = 120
 
         private const val CHANNEL_ID = "LocationReader"
 

@@ -611,9 +611,15 @@ class RealTimeFragment : Fragment() {
 //        counter = 0
         val listOfDistances = MutableList(7) { index -> 1000000.0 }
 
+        for (i in 0..35) {
+//            val fileName_i = "trees_full_part_"+i.toString().dropLast(2)+".txt"
+            val fileName_i = "trees_full_part_"+i.toString()+".txt"
+//            val fileName_i = "trees_full_part_1.txt"
+            val inputStream = context.assets.open(fileName_i)
+
         try {
 
-            val inputStream = context.assets.open(fileName)
+
             val size = inputStream.available()
             val buffer = ByteArray(size)
             inputStream.read(buffer)
@@ -637,8 +643,8 @@ class RealTimeFragment : Fragment() {
                     special_tree = "True"
                 }
 
-                if((selectedOption=="All species")||(species==selectedOption)) {
-                    if((selectedOption_award=="All trees")||((selectedOption_award=="Only special trees")&&(special_tree=="True"))) {
+                if ((selectedOption == "All species") || (species == selectedOption)) {
+                    if ((selectedOption_award == "All trees") || ((selectedOption_award == "Only special trees") && (special_tree == "True"))) {
 
                         val latitude = parts[0].toDouble()
                         val longitude = parts[1].toDouble()
@@ -656,10 +662,9 @@ class RealTimeFragment : Fragment() {
                         val distance = calculateDistance(referenceLocation, gpsLocation)
                         val maxDistanceIndex = listOfDistances.indexOf(listOfDistances.maxOrNull())
                         if (distance < listOfDistances[maxDistanceIndex]) {
-                            if (gpsLocations.size < 7){
+                            if (gpsLocations.size < 7) {
                                 gpsLocations.add(gpsLocation)
-                            }
-                            else {
+                            } else {
                                 gpsLocations[maxDistanceIndex] = gpsLocation
                             }
                             listOfDistances[maxDistanceIndex] = distance
@@ -675,6 +680,7 @@ class RealTimeFragment : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
 
         return gpsLocations
     }
@@ -727,8 +733,8 @@ class RealTimeFragment : Fragment() {
 //            val current_latitude = 53.280571
 //            val current_longitude = -1.634341
 
-             current_latitude = 51.460597
-             current_longitude = -2.636258
+//             current_latitude = 51.460597
+//             current_longitude = -2.636258
 
 
             clearGoogleMapsMarkers()
