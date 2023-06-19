@@ -45,6 +45,8 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import android.widget.Button
+import com.google.android.gms.maps.CameraUpdate
 
 class RealTimeFragment : Fragment() {
     /**
@@ -78,7 +80,8 @@ class RealTimeFragment : Fragment() {
     private lateinit var tvTreeCard1_image : MutableList<ImageView>
     private lateinit var tvTreeCard1_compass : MutableList<ImageView>
 
-    private lateinit var tvTreeCard1_cardView : MutableList<CardView>
+//    private lateinit var tvTreeCard1_cardView : MutableList<CardView>
+    private lateinit var tvTreeCard1_viewButton : MutableList<Button>
 
     private var current_closest_gpsLocations = mutableListOf<GPSLocation>()
 
@@ -90,6 +93,8 @@ class RealTimeFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
 
+    private lateinit var current_position: LatLng
+    private lateinit var current_CameraUpdate: CameraUpdate
     /**
      * It tells if we should center the camera of the map every time a position is retrieved. If the user has moved the map, we want to keep
      * the settings made to the map by the user themselves instead of re-centering
@@ -349,6 +354,15 @@ class RealTimeFragment : Fragment() {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(callback)
 
+        val button: Button = view.findViewById(R.id.map_centre_button)
+        button.setOnClickListener {
+//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(current_position, 15f))
+            try{
+                map.animateCamera(current_CameraUpdate)
+            }
+            catch(e: Exception){}
+
+        }
 
 
 
@@ -414,7 +428,8 @@ class RealTimeFragment : Fragment() {
         tvTreeCard1_image = mutableListOf()
         tvTreeCard1_compass = mutableListOf()
 
-        tvTreeCard1_cardView = mutableListOf()
+//        tvTreeCard1_cardView = mutableListOf()
+        tvTreeCard1_viewButton = mutableListOf()
 
         for (i in 0 until 5) {
             tvTreeCard1_dist.add(list_treeCard_views[i].findViewById(R.id.textView4))
@@ -426,11 +441,20 @@ class RealTimeFragment : Fragment() {
             tvTreeCard1_image.add(list_treeCard_views[i].findViewById(R.id.imageView1))
             tvTreeCard1_compass.add(list_treeCard_views[i].findViewById(R.id.imageView2))
 
-            tvTreeCard1_cardView.add(list_treeCard_views[i].findViewById<CardView>(R.id.card_view))
+//            tvTreeCard1_cardView.add(list_treeCard_views[i].findViewById<CardView>(R.id.card_view))
+            tvTreeCard1_viewButton.add(list_treeCard_views[i].findViewById(R.id.view_button))
 
-            list_treeCard_views[i].findViewById<CardView>(R.id.card_view).setOnClickListener{
-//                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(51.220328, -0.341247), 15f))
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(current_closest_gpsLocations[i].latitude, current_closest_gpsLocations[i].longitude), 18f))
+//            list_treeCard_views[i].findViewById<CardView>(R.id.card_view).setOnClickListener{
+////                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(51.220328, -0.341247), 15f))
+//                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(current_closest_gpsLocations[i].latitude, current_closest_gpsLocations[i].longitude), 18f))
+//            }
+
+            val view_button: Button = list_treeCard_views[i].findViewById(R.id.view_button)
+            view_button.setOnClickListener{
+                try{
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(current_closest_gpsLocations[i].latitude, current_closest_gpsLocations[i].longitude), 18f))
+                }
+                catch(e: Exception){}
             }
 
         }
@@ -615,7 +639,7 @@ class RealTimeFragment : Fragment() {
 
             val current_latitude = location.latitude.toDouble()
             val current_longitude = location.longitude.toDouble()
-
+            current_position = LatLng(current_latitude, current_longitude)
 //             HOME FARM
 //            val current_latitude = 51.220328
 //            val current_longitude = -0.341247
@@ -767,6 +791,7 @@ class RealTimeFragment : Fragment() {
                 mapView.getMapAsync { googleMap ->
                     googleMap.animateCamera(cameraUpdate)
                 }
+                current_CameraUpdate = cameraUpdate
             }
 
 
