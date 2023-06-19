@@ -314,7 +314,7 @@ class RealTimeFragment : Fragment() {
         }
     }
 
-    private fun updateMapWithTreeLocation(latitude: Double, longitude: Double) {
+    private fun updateMapWithTreeLocation(latitude: Double, longitude: Double, species: String) {
         val currentLocation = LatLng(latitude, longitude)
 
         val height = 150 // resize according to your zooming level
@@ -324,7 +324,7 @@ class RealTimeFragment : Fragment() {
         val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
 
         mapView.getMapAsync { googleMap ->
-            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title("My Location"))
+            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(species))
         }
     }
 
@@ -429,7 +429,8 @@ class RealTimeFragment : Fragment() {
             tvTreeCard1_cardView.add(list_treeCard_views[i].findViewById<CardView>(R.id.card_view))
 
             list_treeCard_views[i].findViewById<CardView>(R.id.card_view).setOnClickListener{
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(51.220328, -0.341247), 15f))
+//                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(51.220328, -0.341247), 15f))
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(current_closest_gpsLocations[i].latitude, current_closest_gpsLocations[i].longitude), 18f))
             }
 
         }
@@ -677,7 +678,6 @@ class RealTimeFragment : Fragment() {
                 builder.include(pos)
 
 
-                updateMapWithTreeLocation(location2.latitude, location2.longitude)
 
 
                 android.location.Location.distanceBetween(
@@ -709,6 +709,8 @@ class RealTimeFragment : Fragment() {
                 val dist = results[0].toDouble()
 
                 val tree_species = closestLocations[i].species
+
+                updateMapWithTreeLocation(location2.latitude, location2.longitude, tree_species)
 
                 if (dist > 1000) {
                     val new_dist = dist / 1000
