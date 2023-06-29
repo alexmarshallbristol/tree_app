@@ -49,7 +49,7 @@ import android.widget.Button
 import com.google.android.gms.maps.CameraUpdate
 import java.util.*
 import java.io.File
-
+import com.google.android.gms.maps.model.Marker
 class RealTimeFragment : Fragment() {
     /**
      * TextView showing Longitude. We are keeping this as variable in order to prevent to ask the UI for this textView
@@ -108,6 +108,8 @@ class RealTimeFragment : Fragment() {
      * Reference to the map shown on the screen
      */
     private lateinit var map : GoogleMap
+    private lateinit var myLocMarker: Marker
+
 
     /**
      * ActivityViewModel shared with Activity and Fragment
@@ -236,6 +238,24 @@ class RealTimeFragment : Fragment() {
         }
 
 
+        val height = 60 // resize according to your zooming level
+        val width = 60 // resize according to your zooming level
+        var bitmapDraw: BitmapDrawable
+        var loc_string: String
+        bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+        loc_string = "My Location"
+
+        val bitmap = bitmapDraw.bitmap
+        val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
+
+        val startLoc = LatLng(51.4545, -2.5879)
+
+        mapView.getMapAsync { googleMap ->
+            googleMap.addMarker(MarkerOptions().position(startLoc).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(loc_string).zIndex(9f)
+            )
+        }
+
+
         //insert the marker in the current position
         insertMarker()
 
@@ -307,6 +327,32 @@ class RealTimeFragment : Fragment() {
         mapView.getMapAsync { googleMap ->
             googleMap.clear() // Clear previous markers if any
         }
+
+
+        val sample = model.readerService!!.currentSample
+        if(sample.latitude != null && sample.longitude != null) {
+            val currentLocation = LatLng(sample.latitude.toDouble(), sample.longitude.toDouble())
+//            val currentLocation = LatLng(51.4545, -2.5879)
+            val height = 60 // resize according to your zooming level
+            val width = 60 // resize according to your zooming level
+            var bitmapDraw: BitmapDrawable
+            var loc_string: String
+            bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+            loc_string = "My Location"
+
+            val bitmap = bitmapDraw.bitmap
+            val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
+//            myLocMarker = map.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(loc_string).zIndex(9f))
+
+            mapView.getMapAsync { googleMap ->
+                googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(loc_string).zIndex(9f)
+                )
+            }
+
+        }
+
+
+
     }
 
     private fun updateMapWithLocation(latitude: Double, longitude: Double, red_label: Boolean = false) {
@@ -319,19 +365,21 @@ class RealTimeFragment : Fragment() {
         if(red_label){
             bitmapDraw = resources.getDrawable(R.drawable.red_dot) as BitmapDrawable
             loc_string = "Pinned Location"
-        }
-        else{
-            bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
-            loc_string = "My Location"
-        }
-        val bitmap = bitmapDraw.bitmap
-        val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
 
-        mapView.getMapAsync { googleMap ->
+            val bitmap = bitmapDraw.bitmap
+            val finalMarker = Bitmap.createScaledBitmap(bitmap, width, height, false)
+
+            mapView.getMapAsync { googleMap ->
 //            googleMap.clear() // Clear previous markers if any
-            googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(loc_string).zIndex(9f))
+                googleMap.addMarker(MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.fromBitmap(finalMarker)).title(loc_string).zIndex(9f))
 //            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+            }
         }
+//        else{
+//            bitmapDraw = resources.getDrawable(R.drawable.blue_dot) as BitmapDrawable
+//            loc_string = "My Location"
+//        }
+
     }
 
     private fun updateMapWithTreeLocation(latitude: Double, longitude: Double, species: String = "", alpha: Float = 1f) {
@@ -610,7 +658,7 @@ class RealTimeFragment : Fragment() {
     private fun readGPSLocationsFromAssets(context: Context, fileName: String, referenceLocation: GPSLocation): List<GPSLocation> {
         val gpsLocations = mutableListOf<GPSLocation>()
 
-//        counter = 0
+        counter = 0
         val listOfDistances = MutableList(7) { index -> 1000000.0 }
 
         for (i in 0..35) {
@@ -673,7 +721,7 @@ class RealTimeFragment : Fragment() {
                         }
 
 //                        gpsLocations.add(gpsLocation)
-//                        counter++
+                        counter++
                     }
                 }
 
@@ -710,6 +758,19 @@ class RealTimeFragment : Fragment() {
      */
     private fun updateCards(location : LocationDetails, pause: Boolean = false, red_label: Boolean = false, force_with_last_position: Boolean = false)
     {
+
+
+//        else{
+//
+//        }
+
+
+
+
+
+
+
+//        counter = counter + 1
         if(force_with_last_position) {
             pause_updates = false
         }
@@ -738,9 +799,7 @@ class RealTimeFragment : Fragment() {
 //             current_latitude = 51.460597
 //             current_longitude = -2.636258
 
-
             clearGoogleMapsMarkers()
-
 
             val builder = LatLngBounds.Builder()
 
@@ -850,6 +909,8 @@ class RealTimeFragment : Fragment() {
                 tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing.toDouble()))
                 tvTreeCard1_spec[i].text = Html.fromHtml("<b>Species: " + String.format("</b>%s", tree_species))
 
+//                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", counter.toString()))
+//                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", gpsLocations.size.toString()))
                 tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", closestLocations[i].localName))
                 tvTreeCard1_public[i].text = Html.fromHtml("<b>Access: " + String.format("</b>%s", closestLocations[i].publicAccessibilityStatus))
 
