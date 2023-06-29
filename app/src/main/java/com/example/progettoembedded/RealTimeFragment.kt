@@ -850,12 +850,7 @@ class RealTimeFragment : Fragment() {
                 tvTreeCard1_bear[i].text = Html.fromHtml("<b>Bearing: " + String.format("</b>N%.1fºE", bearing.toDouble()))
                 tvTreeCard1_spec[i].text = Html.fromHtml("<b>Species: " + String.format("</b>%s", tree_species))
 
-
-//                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", closestLocations[i].localName))
-//                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", counter))
-                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", "${gpsLocations.size}"))
-
-
+                tvTreeCard1_local[i].text = Html.fromHtml("<b>Local Name: " + String.format("</b>%s", closestLocations[i].localName))
                 tvTreeCard1_public[i].text = Html.fromHtml("<b>Access: " + String.format("</b>%s", closestLocations[i].publicAccessibilityStatus))
 
                 if (closestLocations[i].TNSI != "False" || closestLocations[i].heritageTree != "False" || closestLocations[i].TotY != "False" || closestLocations[i].championTree != "False") {
